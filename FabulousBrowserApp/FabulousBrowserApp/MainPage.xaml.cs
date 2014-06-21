@@ -141,7 +141,7 @@ namespace FabulousBrowserApp
 
             InitFileSource();
 
-            InitKinect();
+            //InitKinect();
         }
 
 
