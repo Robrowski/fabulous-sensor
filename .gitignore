@@ -21,3 +21,5 @@
 *.app
 /FabulousApp/FabulousApp/obj
 /FabulousApp/FabulousApp/bin
+/FabulousApp/KinectTester/obj
+/FabulousApp/KinectTester/bin
