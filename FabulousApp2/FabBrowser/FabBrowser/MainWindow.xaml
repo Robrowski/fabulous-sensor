@@ -111,8 +111,8 @@
             <Grid x:Name="GrdKinectPreview" 
                   VerticalAlignment="Bottom" 
                   HorizontalAlignment="Right" 
-                  MinHeight="350" MinWidth="400" Background="Green" IsHitTestVisible="False">
-                <Image Source="{Binding ImageSource, ElementName=FabWindow}" Stretch="UniformToFill" />
+                  Height="350" Width="400" Background="Green" IsHitTestVisible="False">
+                <Image Source="{Binding ImageSource, ElementName=FabWindow}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Grid>
         </Grid>
     </Grid>

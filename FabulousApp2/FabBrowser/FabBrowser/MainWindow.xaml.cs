@@ -26,7 +26,7 @@ namespace FabBrowser
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         readonly List<string> _fileTypes = new List<string>{"jpg", "jpeg", "tif", "tiff", "png", "gif"};
 
@@ -104,6 +104,8 @@ namespace FabBrowser
             InitializeComponent();
 
             InitFileSource();
+
+            InitKinect();
         }
 
         private void InitFileSource()
@@ -294,6 +296,13 @@ namespace FabBrowser
                                 this.pixels,
                                 frameDescription.Width * this.bytesPerPixel,
                                 0);
+
+
+                            // notify any bound elements that the text has changed
+                            if (this.PropertyChanged != null)
+                            {
+                                this.PropertyChanged(this, new PropertyChangedEventArgs("ImageSource"));
+                            }
                         }
                     }
                 }
