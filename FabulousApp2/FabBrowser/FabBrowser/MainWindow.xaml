@@ -21,8 +21,49 @@
         </Grid.ColumnDefinitions>
 
         <Grid>
+            <Grid.Resources>
+                <Style x:Key="CompactFileViewerElementStyle" TargetType="ListBoxItem">
+                    <Setter Property="Height" Value="100" />
+                    <Setter Property="Background" Value="Red" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate x:Name="CompactFileViewerListboxItemTemplate" TargetType="ListBoxItem">
+                                <Grid x:Name="Layout" d:DataContext="{d:DesignInstance Type={x:Type fabBrowser:MyFileContainer}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid x:Name="GrdThumbnailContainer" Background="Blue" Grid.Column="0" >
+                                        <Image x:Name="ImgThumbnail" Stretch="UniformToFill"  VerticalAlignment="Center" HorizontalAlignment="Center"  Source="{Binding ImageSource}"/>
+                                    </Grid>
+                                    <Grid Grid.Column="1" x:Name="GrdFileData" Background="Orange">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock x:Name="TbFileName" Grid.Row="0" Grid.Column="0" Text="{Binding ShortName}"/>
+                                        <TextBlock x:Name="TbFileSize" Grid.Row="0" Grid.Column="1" Text="DummyFileSize"/>
+                                        <TextBlock x:Name="TbFileType" Grid.Row="1" Grid.Column="0" Text="DummyFileType"/>
+                                        <TextBlock x:Name="TbFilePlaceholderData" Grid.Row="1" Grid.Column="1" Text="DummyPlaceholder"/>
+                                        <TextBlock x:Name="TbFileURI"  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding FilePath}"/>
+                                    </Grid>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <Style x:Key="CompactFileListBoxItemStyle" TargetType="ListBox">
+                    <Setter Property="ItemContainerStyle" Value="{StaticResource CompactFileViewerElementStyle}"/>
+                </Style>
+            </Grid.Resources>
             <Grid.RowDefinitions>
-                <RowDefinition Height="200" />
+                <RowDefinition Height="50" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid x:Name="GrdFileNav">
@@ -35,16 +76,11 @@
                 <Button Content="Home" Grid.Column="1"/>
                 <Button Content="Forward" Grid.Column="2"/>
             </Grid>
-            <ListBox Grid.Row="1" 
-                     Name="LbFileSource"
-                     ItemsSource="{Binding FileSource, ElementName=FabWindow}">
-                <ListBox.Resources>
-                    <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
-                        <Setter Property="Height" Value="200" />
-                        <Setter Property="Background" Value="Red" />
-                    </Style>
-                </ListBox.Resources>
-            </ListBox>
+
+            <ListBox x:Name="LbFileSource"
+                     Grid.Row="1"
+                     ItemsSource="{Binding FileSource, ElementName=FabWindow}"
+                     Style="{StaticResource CompactFileListBoxItemStyle}"/>
         </Grid>
 
         <Grid x:Name="GrdExtendedView" Grid.Column="1" 
