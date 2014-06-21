@@ -8,7 +8,10 @@
         mc:Ignorable="d"
         
         Title="MainWindow" Height="1080" Width="1920"
-        Name="FabWindow">
+        Name="FabWindow"
+        
+        WindowStyle="None" ResizeMode="NoResize"  
+    WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <Grid>
         <Grid.ColumnDefinitions>
