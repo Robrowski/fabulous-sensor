@@ -1,6 +1,12 @@
 ﻿<Window x:Class="FabBrowser.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fabBrowser="clr-namespace:FabBrowser"
+        mc:Ignorable="d"
+        
         Title="MainWindow" Height="1080" Width="1920"
         Name="FabWindow">
 
@@ -25,7 +31,9 @@
                 <Button Content="Home" Grid.Column="1"/>
                 <Button Content="Forward" Grid.Column="2"/>
             </Grid>
-            <ListBox Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}">
+            <ListBox Grid.Row="1" 
+                     Name="LbFileSource"
+                     ItemsSource="{Binding FileSource, ElementName=FabWindow}">
                 <ListBox.Resources>
                     <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
                         <Setter Property="Height" Value="200" />
@@ -35,9 +43,11 @@
             </ListBox>
         </Grid>
 
-        <Grid x:Name="GrdExtendedView" Grid.Column="1">
+        <Grid x:Name="GrdExtendedView" Grid.Column="1" 
+              d:DataContext="{d:DesignInstance Type={x:Type fabBrowser:MyFileContainer}}"
+              DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
             <Grid x:Name="GridFullImageRenderer">
-                <Image x:Name="ImgA"/>
+                <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
                 <Image x:Name="ImgB"/>
             </Grid>
             <Button HorizontalAlignment="Left" Content="Previous Image"/>
