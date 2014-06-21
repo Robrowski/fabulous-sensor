@@ -11,7 +11,8 @@
         Name="FabWindow"
         
         WindowStyle="None" ResizeMode="NoResize"  
-    WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="MainWindow_Closing"
+        Loaded="MainWindow_Loaded">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -55,7 +56,12 @@
             </Grid>
             <Button HorizontalAlignment="Left" Content="Previous Image"/>
             <Button HorizontalAlignment="Right" Content="Next Image"/>
-            <Grid x:Name="GrdKinectPreview" VerticalAlignment="Bottom" HorizontalAlignment="Right" MinHeight="350" MinWidth="400" Background="Green" IsHitTestVisible="False"/>
+            <Grid x:Name="GrdKinectPreview" 
+                  VerticalAlignment="Bottom" 
+                  HorizontalAlignment="Right" 
+                  MinHeight="350" MinWidth="400" Background="Green" IsHitTestVisible="False">
+                <Image Source="{Binding ImageSource, ElementName=FabWindow}" Stretch="UniformToFill" />
+            </Grid>
         </Grid>
     </Grid>
 </Window>
