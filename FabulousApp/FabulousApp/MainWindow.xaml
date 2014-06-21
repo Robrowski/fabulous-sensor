@@ -1,7 +1,8 @@
 ﻿<Window x:Class="FabulousApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="1080" Width="1920">
+        Title="MainWindow" Height="1080" Width="1920"
+        Name="FabWindow">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="500"/>
@@ -23,16 +24,13 @@
                 <Button Content="Home" Grid.Column="1"/>
                 <Button Content="Forward" Grid.Column="2"/>
             </Grid>
-            <ListBox Grid.Row="1" >
+            <ListBox Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}">
                 <ListBox.Resources>
                     <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
                         <Setter Property="Height" Value="200" />
                         <Setter Property="Background" Value="Red" />
                     </Style>
                 </ListBox.Resources>
-                <ListBoxItem Style="{StaticResource ListBoxItemStyle}" />
-                <ListBoxItem Style="{StaticResource ListBoxItemStyle}" />
-                <ListBoxItem Style="{StaticResource ListBoxItemStyle}" />
             </ListBox>
         </Grid>
 

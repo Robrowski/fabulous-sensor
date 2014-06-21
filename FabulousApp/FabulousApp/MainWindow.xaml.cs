@@ -1,4 +1,12 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using FabulousApp.Annotations;
 
 namespace FabulousApp
 {
@@ -26,17 +34,25 @@ namespace FabulousApp
 
         public MainWindow()
         {
-            FileSource = new ObservableCollection<MyFileContainer>();
+            //Console.WriteLine("WTF");
+            //FileSource = new ObservableCollection<MyFileContainer>();
 
             InitializeComponent();
 
-            InitFileSource();
+            //InitFileSource();
         }
 
         private void InitFileSource()
         {
             var pictureDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             var files = Directory.GetFiles(pictureDir);
+
+#if DEBUG
+            Console.WriteLine("UserDir {0}", pictureDir);
+
+            foreach(var file in files)
+                Console.WriteLine("Found file {0}", file);
+#endif
 
             foreach (var file in files.Where(file => _fileTypes.Any(filetype => file.ToLower().EndsWith(filetype))))
             {
@@ -89,14 +105,14 @@ namespace FabulousApp
             }
         }
 
-        #region Property Changed
+        #region Property changed
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 

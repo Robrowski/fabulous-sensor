@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FabulousApp", "FabulousApp\FabulousApp.csproj", "{0199571C-884A-4D7E-800E-10E673D5D768}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectTester", "KinectTester\KinectTester.csproj", "{ACAAC4CC-A687-4673-B705-A13282BEC4C3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,14 +19,6 @@ Global
 		{0199571C-884A-4D7E-800E-10E673D5D768}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0199571C-884A-4D7E-800E-10E673D5D768}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0199571C-884A-4D7E-800E-10E673D5D768}.Release|x86.ActiveCfg = Release|Any CPU
-		{ACAAC4CC-A687-4673-B705-A13282BEC4C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ACAAC4CC-A687-4673-B705-A13282BEC4C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ACAAC4CC-A687-4673-B705-A13282BEC4C3}.Debug|x86.ActiveCfg = Debug|x86
-		{ACAAC4CC-A687-4673-B705-A13282BEC4C3}.Debug|x86.Build.0 = Debug|x86
-		{ACAAC4CC-A687-4673-B705-A13282BEC4C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ACAAC4CC-A687-4673-B705-A13282BEC4C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ACAAC4CC-A687-4673-B705-A13282BEC4C3}.Release|x86.ActiveCfg = Release|x86
-		{ACAAC4CC-A687-4673-B705-A13282BEC4C3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
