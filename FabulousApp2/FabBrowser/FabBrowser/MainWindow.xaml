@@ -67,14 +67,30 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid x:Name="GrdFileNav">
+                <Grid.Resources>
+                    <Style x:Key="CustomButtonStyle" TargetType="Button">
+                        <Setter Property="Background" Value="#00EBE6E6" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="GrdLayout"  BorderBrush="White">
+                                        <Grid>
+                                            <ContentPresenter Content="{Binding}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Grid.Resources>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Content="Back" Grid.Column="0"/>
-                <Button Content="Home" Grid.Column="1"/>
-                <Button Content="Forward" Grid.Column="2"/>
+                <Button Content="Back" Grid.Column="0" Style="{StaticResource CustomButtonStyle}"/>
+                <Button Content="Home" Grid.Column="1" Style="{StaticResource CustomButtonStyle}"/>
+                <Button Content="Forward" Grid.Column="2" Style="{StaticResource CustomButtonStyle}"/>
             </Grid>
 
             <ListBox x:Name="LbFileSource"
