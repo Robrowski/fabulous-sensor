@@ -7,9 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -166,8 +168,31 @@ namespace FabulousBrowserApp
 
 
 
-        private void InitFileSource()
+        private async void InitFileSource()
         {
+            StorageFolder picturesFolder = KnownFolders.PicturesLibrary;
+            Debug.WriteLine("Init file source: {0}", picturesFolder.Name);
+
+            StringBuilder outputText = new StringBuilder();
+
+            IReadOnlyList<StorageFile> fileList =
+                await picturesFolder.GetFilesAsync();
+
+            outputText.AppendLine("Files:");
+            foreach (StorageFile file in fileList)
+            {
+                outputText.Append(file.Name + "\n");
+            }
+
+            IReadOnlyList<StorageFolder> folderList =
+                await picturesFolder.GetFoldersAsync();
+
+            outputText.AppendLine("Folders:");
+            foreach (StorageFolder folder in folderList)
+            {
+                outputText.Append(folder.DisplayName + "\n");
+            }
+
             //var pictureDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             //var files = Directory.GetFiles(pictureDir);
 
