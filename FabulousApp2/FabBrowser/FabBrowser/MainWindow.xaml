@@ -1,8 +1,17 @@
 ﻿<Window x:Class="FabBrowser.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fabBrowser="clr-namespace:FabBrowser"
+        mc:Ignorable="d"
+        
         Title="MainWindow" Height="1080" Width="1920"
-        Name="FabWindow">
+        Name="FabWindow"
+        
+        WindowStyle="None" ResizeMode="NoResize"  
+    WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,13 +27,13 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate x:Name="CompactFileViewerListboxItemTemplate" TargetType="ListBoxItem">
-                                <Grid x:Name="Layout">
+                                <Grid x:Name="Layout" d:DataContext="{d:DesignInstance Type={x:Type fabBrowser:MyFileContainer}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="100"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid x:Name="GrdThumbnailContainer" Background="Blue" Grid.Column="0" >
-                                        <Image x:Name="ImgThumbnail" Stretch="UniformToFill" />
+                                        <Image x:Name="ImgThumbnail" Stretch="UniformToFill"  VerticalAlignment="Center" HorizontalAlignment="Center"  Source="{Binding ImageSource}"/>
                                     </Grid>
                                     <Grid Grid.Column="1" x:Name="GrdFileData" Background="Orange">
                                         <Grid.ColumnDefinitions>
@@ -37,11 +46,11 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock x:Name="TbFileName" Grid.Row="0" Grid.Column="0" Text="DummyFileName"/>
+                                        <TextBlock x:Name="TbFileName" Grid.Row="0" Grid.Column="0" Text="{Binding ShortName}"/>
                                         <TextBlock x:Name="TbFileSize" Grid.Row="0" Grid.Column="1" Text="DummyFileSize"/>
                                         <TextBlock x:Name="TbFileType" Grid.Row="1" Grid.Column="0" Text="DummyFileType"/>
                                         <TextBlock x:Name="TbFilePlaceholderData" Grid.Row="1" Grid.Column="1" Text="DummyPlaceholder"/>
-                                        <TextBlock x:Name="TbFileURI"  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="DummyFileURI"/>
+                                        <TextBlock x:Name="TbFileURI"  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding FilePath}"/>
                                     </Grid>
                                 </Grid>
                             </ControlTemplate>
@@ -66,12 +75,18 @@
                 <Button Content="Home" Grid.Column="1"/>
                 <Button Content="Forward" Grid.Column="2"/>
             </Grid>
-            <ListBox Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}" Style="{StaticResource CompactFileListBoxItemStyle}"/>
+
+            <ListBox x:Name="LbFileSource"
+                     Grid.Row="1"
+                     ItemsSource="{Binding FileSource, ElementName=FabWindow}"
+                     Style="{StaticResource CompactFileListBoxItemStyle}"/>
         </Grid>
 
-        <Grid x:Name="GrdExtendedView" Grid.Column="1">
+        <Grid x:Name="GrdExtendedView" Grid.Column="1" 
+              d:DataContext="{d:DesignInstance Type={x:Type fabBrowser:MyFileContainer}}"
+              DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
             <Grid x:Name="GridFullImageRenderer">
-                <Image x:Name="ImgA"/>
+                <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
                 <Image x:Name="ImgB"/>
             </Grid>
             <Button HorizontalAlignment="Left" Content="Previous Image"/>

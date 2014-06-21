@@ -75,6 +75,8 @@ namespace FabBrowser
 
             ShortName = FilePath.Substring(startingCut, lengthCut);
 
+            ImageSource = new Uri(FilePath);
+
 #if DEBUG
             Console.WriteLine("New FileContainer:\n\tFile Source: {0}\n\tShort Name: {1}", FilePath, ShortName);
 #endif
@@ -83,6 +85,7 @@ namespace FabBrowser
 
         private string _filePath;
         private string _shortName;
+        private Uri _imageSource;
 
 
         public string FilePath
@@ -103,6 +106,17 @@ namespace FabBrowser
             {
                 if (value == _shortName) return;
                 _shortName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Uri ImageSource
+        {
+            get { return _imageSource; }
+            set
+            {
+                if (Equals(value, _imageSource)) return;
+                _imageSource = value;
                 OnPropertyChanged();
             }
         }
