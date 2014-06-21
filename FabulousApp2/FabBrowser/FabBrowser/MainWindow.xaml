@@ -11,39 +11,40 @@
         Name="FabWindow"
         Background="{x:Static SystemColors.DesktopBrush}"
         WindowStyle="None" ResizeMode="NoResize"  
-    WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="MainWindow_Closing"
+        Loaded="MainWindow_Loaded">
 
     <Grid x:Name="GrdLayoutRoot" >
         
         <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20" Text="Fabulous Media Browser" Foreground="White" FontSize="25"></TextBlock>
         
         <Grid Margin="50,100,50,50">
-            <Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="500" /> <!-- Compact File Viewer -->
                 <ColumnDefinition Width="*" /> <!-- Content Viewer -->
-            </Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>
 
-            <Grid>
-                <Grid.Resources>
-                    <Style x:Key="CompactFileViewerElementStyle" TargetType="ListBoxItem">
+        <Grid>
+            <Grid.Resources>
+                <Style x:Key="CompactFileViewerElementStyle" TargetType="ListBoxItem">
                         <Setter Property="Height" Value="110" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate x:Name="CompactFileViewerListboxItemTemplate" TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate x:Name="CompactFileViewerListboxItemTemplate" TargetType="ListBoxItem">
                                     <Border BorderBrush="White" BorderThickness="1" Margin="0,2,0,2">
                                         <Grid x:Name="Layout"
                                               d:DataContext="{d:DesignInstance Type={x:Type fabBrowser:MyFileContainer}}">
-                                            <Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="100" /> <!-- Thumbnail Image -->
                                                 <ColumnDefinition Width="*" /> <!-- File Information -->
-                                            </Grid.ColumnDefinitions>
+                                    </Grid.ColumnDefinitions>
                                             <Rectangle Grid.ColumnSpan="2" Fill="Red" Opacity="0"/>
                                             
                                             <Grid x:Name="GrdThumbnailContainer" Background="Blue" Grid.Column="0">
                                                 <Image x:Name="ImgThumbnail" Stretch="UniformToFill"
                                                        VerticalAlignment="Center"
                                                        HorizontalAlignment="Center" Source="{Binding ImageSource}" />
-                                            </Grid>
+                                    </Grid>
                                             
                                             <Grid Grid.Column="1" x:Name="GrdFileData" Margin="10,0,0,0" >
                                                 <Grid.Resources>
@@ -53,17 +54,17 @@
                                                     </Style>
                                                 </Grid.Resources>
                                                 
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" /> 
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
                                                 
-                                                <Grid.RowDefinitions>
+                                        <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto" /> <!-- File name & Size -->
                                                     <RowDefinition Height="Auto" /> <!-- File Type and Misc info -->
                                                     <RowDefinition Height="*" /> <!-- Central Padding -->
                                                     <RowDefinition Height="Auto" /> <!-- File Uri -->
-                                                </Grid.RowDefinitions>
+                                        </Grid.RowDefinitions>
                                                 
                                                 <TextBlock x:Name="TbFileName" Grid.Row="0" Grid.Column="0"
                                                            Text="{Binding ShortName}" Style="{StaticResource DefaultTextBlockStyle}" />
@@ -76,29 +77,29 @@
                                                 <TextBlock x:Name="TbFileURI" Grid.Row="3" Grid.Column="0"
                                                            Grid.ColumnSpan="2"
                                                            Text="{Binding FilePath}" Style="{StaticResource DefaultTextBlockStyle}"/>
-                                            </Grid>
-                                        </Grid>
+                                    </Grid>
+                                </Grid>
                                     </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                    <Style x:Key="CompactFileListBoxItemStyle" TargetType="ListBox">
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <Style x:Key="CompactFileListBoxItemStyle" TargetType="ListBox">
                         <Setter Property="ItemContainerStyle" Value="{StaticResource CompactFileViewerElementStyle}" />
-                    </Style>
-                </Grid.Resources>
+                </Style>
+            </Grid.Resources>
                 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
                 
-                <Grid x:Name="GrdFileNav">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+            <Grid x:Name="GrdFileNav">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
                     
                     <Button Content="Back" Grid.Column="0" />
                     
@@ -106,29 +107,30 @@
                     
                     <Button Content="Forward" Grid.Column="2" />
                     
-                </Grid>
-
-                <ListBox x:Name="LbFileSource"
-                         Grid.Row="1"
-                         ItemsSource="{Binding FileSource, ElementName=FabWindow}"
-                         Style="{StaticResource CompactFileListBoxItemStyle}" Background="{x:Null}" BorderBrush="{x:Null}"/>
             </Grid>
 
-            <Grid x:Name="GrdExtendedView" Grid.Column="1"
-                  d:DataContext="{d:DesignInstance Type={x:Type fabBrowser:MyFileContainer}}"
-                  DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
+            <ListBox x:Name="LbFileSource"
+                     Grid.Row="1"
+                     ItemsSource="{Binding FileSource, ElementName=FabWindow}"
+                         Style="{StaticResource CompactFileListBoxItemStyle}" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        </Grid>
+
+        <Grid x:Name="GrdExtendedView" Grid.Column="1" 
+              d:DataContext="{d:DesignInstance Type={x:Type fabBrowser:MyFileContainer}}"
+              DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
                 
-                <Grid x:Name="GridFullImageRenderer">
-                    <Image x:Name="ImgA" Source="{Binding ImageSource}" />
-                    <Image x:Name="ImgB" />
+            <Grid x:Name="GridFullImageRenderer">
+                <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
+                <Image x:Name="ImgB"/>
+            </Grid>
+                 <Button HorizontalAlignment="Left" Content="Previous Image"/>
+                 <Button HorizontalAlignment="Right" Content="Next Image"/>
+                <Grid x:Name="GrdKinectPreview" 
+                  VerticalAlignment="Bottom" 
+                  HorizontalAlignment="Right" 
+                  Height="350" Width="400" Background="Green" IsHitTestVisible="False">
+                <Image Source="{Binding ImageSource, ElementName=FabWindow}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
-                
-                <Button HorizontalAlignment="Left" Content="Previous Image" />
-                <Button HorizontalAlignment="Right" Content="Next Image" />
-                
-                <Grid x:Name="GrdKinectPreview" VerticalAlignment="Bottom" HorizontalAlignment="Right" MinHeight="350"
-                      MinWidth="400" Background="Green" IsHitTestVisible="False" />
-                
             </Grid>
         </Grid>
     </Grid>
