@@ -81,7 +81,7 @@
 
         <Grid x:Name="GrdExtendedView" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
             <Grid x:Name="GridFullImageRenderer">
-                <Image x:Name="ImgA"/>
+                <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
                 <Image x:Name="ImgB"/>
             </Grid>
             <Button HorizontalAlignment="Left" Content="Previous Image"/>
@@ -93,6 +93,7 @@
                 <Image Name="ImgKinectTarget" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <!-- Source="{Binding ImageSource, ElementName=FabWindow}" -->
             </Grid>
+            <TextBlock Height="30" VerticalAlignment="Bottom" Text="{Binding FilePath}"/>
         </Grid>
     </Grid>
 </Page>

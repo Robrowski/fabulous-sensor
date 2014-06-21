@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -173,25 +174,20 @@ namespace FabulousBrowserApp
             StorageFolder picturesFolder = KnownFolders.PicturesLibrary;
             Debug.WriteLine("Init file source: {0}", picturesFolder.Name);
 
-            StringBuilder outputText = new StringBuilder();
 
-            IReadOnlyList<StorageFile> fileList =
-                await picturesFolder.GetFilesAsync();
+            IReadOnlyList<StorageFile> fileList = await picturesFolder.GetFilesAsync();
 
-            outputText.AppendLine("Files:");
             foreach (StorageFile file in fileList)
             {
-                outputText.Append(file.Name + "\n");
+                var fileContainer = new MyFileContainer(file);
+                fileContainer.Initialize();
+                FileSource.Add(fileContainer);
             }
 
-            IReadOnlyList<StorageFolder> folderList =
-                await picturesFolder.GetFoldersAsync();
-
-            outputText.AppendLine("Folders:");
-            foreach (StorageFolder folder in folderList)
-            {
-                outputText.Append(folder.DisplayName + "\n");
-            }
+            //foreach (var file in files.Where(file => _fileTypes.Any(filetype => file.ToLower().EndsWith(filetype))))
+            //{
+            //    FileSource.Add(new MyFileContainer(file));
+            //}
 
             //var pictureDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             //var files = Directory.GetFiles(pictureDir);
@@ -332,27 +328,36 @@ namespace FabulousBrowserApp
 
     public sealed class MyFileContainer : INotifyPropertyChanged
     {
-        public MyFileContainer(string filePath)
+        public MyFileContainer(StorageFile filePath)
         {
-            FilePath = filePath;
+            _originalFile = filePath;
 
-            var startingCut = FilePath.LastIndexOf("\\") + 1; //Ignore leading \
-            var endingCut = FilePath.LastIndexOf(".");
-            var lengthCut = endingCut - startingCut;
+            FilePath = filePath.Path;
 
-            ShortName = FilePath.Substring(startingCut, lengthCut);
+            var length = filePath.Name.LastIndexOf(".");
 
-            ImageSource = new Uri(FilePath);
+            ShortName = filePath.Name.Substring(0, length);
 
 #if DEBUG
-            Debug.WriteLine("New FileContainer:\n\tFile Source: {0}\n\tShort Name: {1}", FilePath, ShortName);
+            Debug.WriteLine("New FileContainer:\n\tFile Source: {0}\n\tShort Name: {1}\n\tImageSource: {2}", FilePath, ShortName, ImageSource);
 #endif
+        }
+
+        public async void Initialize()
+        {
+            var file = await Windows.Storage.KnownFolders.PicturesLibrary.GetFileAsync(_originalFile.Name);
+            var stream = await file.OpenReadAsync();
+            var bi = new BitmapImage();
+            bi.SetSource(stream);
+            
+            ImageSource = bi;
         }
 
 
         private string _filePath;
         private string _shortName;
-        private Uri _imageSource;
+        private BitmapImage _imageSource;
+        private StorageFile _originalFile;
 
 
         public string FilePath
@@ -377,7 +382,7 @@ namespace FabulousBrowserApp
             }
         }
 
-        public Uri ImageSource
+        public BitmapImage ImageSource
         {
             get { return _imageSource; }
             set
@@ -386,6 +391,16 @@ namespace FabulousBrowserApp
                 _imageSource = value;
                 OnPropertyChanged();
             }
+        }
+
+        public async static Task<BitmapImage> ImageFromRelativePath(StorageFile storageFile)
+        {
+            var file = await Windows.Storage.KnownFolders.PicturesLibrary.GetFileAsync(storageFile.Name);
+            var stream = await file.OpenReadAsync();
+            var bi = new BitmapImage();
+            bi.SetSource(stream);
+
+            return bi;
         }
 
         #region Property Changed
