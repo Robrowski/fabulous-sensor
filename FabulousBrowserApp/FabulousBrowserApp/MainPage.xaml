@@ -57,6 +57,61 @@
                 <Style x:Key="CompactFileListBoxItemStyle" TargetType="GridView">
                     <Setter Property="ItemContainerStyle" Value="{StaticResource CompactFileViewerElementStyle}"/>
                 </Style>
+                <Style x:Key="CompactFileViewerItemsControlStyle" TargetType="ItemsControl">
+                    <Setter Property="ItemTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <Border Margin="0,2,0,2" BorderBrush="White" BorderThickness="1">
+                                    <Grid x:Name="Layout" Height="110" Width="500">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid x:Name="GrdThumbnailContainer" Background="Blue" Grid.Column="0">
+                                            <Image x:Name="ImgThumbnail" Stretch="UniformToFill" VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center" Source="{Binding ImageSource}" />
+                                        </Grid>
+                                        <Grid Grid.Column="1" x:Name="GrdFileData" Margin="5,0,0,0">
+                                            <Grid.Resources>
+                                                <Style x:Key="CompactFileTextStyle" TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="White" />
+                                                    <Setter Property="Margin" Value="0,2,0,2"/>
+                                                    <Setter Property="FontSize" Value="16"></Setter>
+                                                </Style>
+                                            </Grid.Resources>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock x:Name="TbFileName" Grid.Row="0" Grid.Column="0" Text="{Binding ShortName}"
+                                                       Style="{StaticResource CompactFileTextStyle}" />
+                                            <TextBlock x:Name="TbFileSize" Grid.Row="0" Grid.Column="1" Text="DummyFileSize" 
+                                                       Style="{StaticResource CompactFileTextStyle}" />
+                                            <TextBlock x:Name="TbFileType" Grid.Row="1" Grid.Column="0" Text="DummyFileType" 
+                                                       Style="{StaticResource CompactFileTextStyle}" />
+                                            <TextBlock x:Name="TbFilePlaceholderData" Grid.Row="1" Grid.Column="1" Text="DummyPlaceholder" 
+                                                       Style="{StaticResource CompactFileTextStyle}" />
+                                            <TextBlock x:Name="TbFileURI" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                                                       Text="{Binding FilePath}" Style="{StaticResource CompactFileTextStyle}" />
+                                        </Grid>
+                                    </Grid></Border>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="ItemContainerTransitions">
+                        <Setter.Value>
+                            <TransitionCollection>
+                                <EntranceThemeTransition/>
+                            </TransitionCollection>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
             </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
@@ -73,57 +128,8 @@
                 <Button Content="Forward" Grid.Column="2"/>
             </Grid>
 
-            <ItemsControl x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="0,2,0,2" BorderBrush="White" BorderThickness="1">
-                            <Grid x:Name="Layout" Height="110">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid x:Name="GrdThumbnailContainer" Background="Blue" Grid.Column="0">
-                                    <Image x:Name="ImgThumbnail" Stretch="UniformToFill" VerticalAlignment="Center"
-                                           HorizontalAlignment="Center" Source="{Binding ImageSource}" />
-                                </Grid>
-                                <Grid Grid.Column="1" x:Name="GrdFileData" Margin="5,0,0,0">
-                                    <Grid.Resources>
-                                        <Style x:Key="CompactFileTextStyle" TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="White" />
-                                            <Setter Property="Margin" Value="0,2,0,2"/>
-                                            <Setter Property="FontSize" Value="16"></Setter>
-                                        </Style>
-                                    </Grid.Resources>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <TextBlock x:Name="TbFileName" Grid.Row="0" Grid.Column="0" Text="{Binding ShortName}"
-                                               Style="{StaticResource CompactFileTextStyle}" />
-                                    <TextBlock x:Name="TbFileSize" Grid.Row="0" Grid.Column="1" Text="DummyFileSize" 
-                                               Style="{StaticResource CompactFileTextStyle}" />
-                                    <TextBlock x:Name="TbFileType" Grid.Row="1" Grid.Column="0" Text="DummyFileType" 
-                                               Style="{StaticResource CompactFileTextStyle}" />
-                                    <TextBlock x:Name="TbFilePlaceholderData" Grid.Row="1" Grid.Column="1" Text="DummyPlaceholder" 
-                                               Style="{StaticResource CompactFileTextStyle}" />
-                                    <TextBlock x:Name="TbFileURI" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                                               Text="{Binding FilePath}" Style="{StaticResource CompactFileTextStyle}" />
-                                </Grid>
-                            </Grid></Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemContainerTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition/>
-                    </TransitionCollection>
-                </ItemsControl.ItemContainerTransitions>
-            </ItemsControl>
+            <ListBox x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}"
+                          Style="{StaticResource CompactFileViewerItemsControlStyle}" Background="{x:Null}" BorderBrush="{x:Null}"/>
         </Grid>
 
         <Grid x:Name="GrdExtendedView" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
