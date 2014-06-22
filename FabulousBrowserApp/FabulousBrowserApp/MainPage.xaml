@@ -18,7 +18,7 @@
 
         <Grid>
             <Grid.Resources>
-                <Style x:Key="CompactFileViewerElementStyle" TargetType="ListBoxItem">
+                <Style x:Key="CompactFileViewerElementStyle" TargetType="GridViewItem">
                     <Setter Property="Height" Value="100" />
                     <Setter Property="Background" Value="Red" />
                     <Setter Property="Template">
@@ -54,7 +54,7 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-                <Style x:Key="CompactFileListBoxItemStyle" TargetType="ListBox">
+                <Style x:Key="CompactFileListBoxItemStyle" TargetType="GridView">
                     <Setter Property="ItemContainerStyle" Value="{StaticResource CompactFileViewerElementStyle}"/>
                 </Style>
             </Grid.Resources>
@@ -68,15 +68,62 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Content="Back" Grid.Column="0"/>
+                <Button Content="Back" Grid.Column="0" />
                 <Button Content="Home" Grid.Column="1"/>
                 <Button Content="Forward" Grid.Column="2"/>
             </Grid>
 
-            <ListBox x:Name="LbFileSource"
-                     Grid.Row="1"
-                     ItemsSource="{Binding FileSource, ElementName=FabWindow}"
-                     Style="{StaticResource CompactFileListBoxItemStyle}"/>
+            <ItemsControl x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,2,0,2" BorderBrush="White" BorderThickness="1">
+                            <Grid x:Name="Layout" Height="110">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid x:Name="GrdThumbnailContainer" Background="Blue" Grid.Column="0">
+                                    <Image x:Name="ImgThumbnail" Stretch="UniformToFill" VerticalAlignment="Center"
+                                           HorizontalAlignment="Center" Source="{Binding ImageSource}" />
+                                </Grid>
+                                <Grid Grid.Column="1" x:Name="GrdFileData" Margin="5,0,0,0">
+                                    <Grid.Resources>
+                                        <Style x:Key="CompactFileTextStyle" TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="White" />
+                                            <Setter Property="Margin" Value="0,2,0,2"/>
+                                            <Setter Property="FontSize" Value="16"></Setter>
+                                        </Style>
+                                    </Grid.Resources>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock x:Name="TbFileName" Grid.Row="0" Grid.Column="0" Text="{Binding ShortName}"
+                                               Style="{StaticResource CompactFileTextStyle}" />
+                                    <TextBlock x:Name="TbFileSize" Grid.Row="0" Grid.Column="1" Text="DummyFileSize" 
+                                               Style="{StaticResource CompactFileTextStyle}" />
+                                    <TextBlock x:Name="TbFileType" Grid.Row="1" Grid.Column="0" Text="DummyFileType" 
+                                               Style="{StaticResource CompactFileTextStyle}" />
+                                    <TextBlock x:Name="TbFilePlaceholderData" Grid.Row="1" Grid.Column="1" Text="DummyPlaceholder" 
+                                               Style="{StaticResource CompactFileTextStyle}" />
+                                    <TextBlock x:Name="TbFileURI" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                                               Text="{Binding FilePath}" Style="{StaticResource CompactFileTextStyle}" />
+                                </Grid>
+                            </Grid></Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemContainerTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition/>
+                    </TransitionCollection>
+                </ItemsControl.ItemContainerTransitions>
+            </ItemsControl>
         </Grid>
 
         <Grid x:Name="GrdExtendedView" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
@@ -84,8 +131,8 @@
                 <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
                 <Image x:Name="ImgB"/>
             </Grid>
-            <Button HorizontalAlignment="Left" Content="Previous Image"/>
-            <Button HorizontalAlignment="Right" Content="Next Image"/>
+            <Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
+            <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>
             <Grid x:Name="GrdKinectPreview" 
                   VerticalAlignment="Bottom" 
                   HorizontalAlignment="Right" 
