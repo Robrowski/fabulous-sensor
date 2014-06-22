@@ -104,9 +104,17 @@ namespace FabulousBrowserApp
             // Calculate and store the bone's angular position in the XY plane
             float dX = jointA.Position.X - jointB.Position.X;
             float dY = jointA.Position.Y - jointB.Position.Y;
-            double angle = Math.Atan2(dY,dX);           
-            _angleHistory.Enqueue(  angle*180/Math.PI); // store angle as degrees because
-           
+            double angle = Math.Atan2(dY, dX) * 180 / Math.PI;
+
+//            Debug.WriteLine("Angle: {0}", angle);
+
+            if (angle < -10 && angle > 179)
+            {
+                return false;
+            }
+            _angleHistory.Enqueue(angle); // store angle as degrees because
+
+
             // Maintain queue size
             if (_angleHistory.Count > _maxHistorySize)
             {
@@ -119,42 +127,28 @@ namespace FabulousBrowserApp
                 double displacement = currentPosition - f;
 
                 // Make sure the displacement is between +/- PI
-                if (displacement > Math.PI)
+                if (displacement >= 180)
                 {
-                    displacement -= Math.PI;
+                    displacement -= 179;
                 }
-                else if (displacement < -Math.PI)
+                else if (displacement <= 180)
                 {
-                    displacement += Math.PI;
+                    displacement += 179;
                 }
 
                 // If magnitude of displacement > desired AND the displacements are in the same direction, we have a gesture
                 if (Math.Abs(displacement) >= Math.Abs(_minimumAngularDisplacement) && displacement*_minimumAngularDisplacement > 0)
                 {
+                    Debug.WriteLine("displacement: {0}:", displacement);
+                    Debug.WriteLine("current: {0}:", currentPosition);
+                    
+
                     _angleHistory.Clear();
                     return true;
                 }
 
             }
 
-            
-            //// for finding when just the minimum desired displacement occured
-            // Calculate sum of angles from whole queue
-//            float max = float.MinValue;
-//            float min = float.MaxValue;
-//            foreach (float f in _angleHistory)
-//            {
-//                max = Math.Max(max, f);
-//                min = Math.Min(min, f);
-//            }
-//            
-//            // Check if enough displacement occured in the given maximum amount of time. 
-//            if (Math.Abs(max - min) >= _minimumAngularDisplacement )
-//            {
-//                _angleHistory.Clear();
-//                return true;
-//            }
-            
             return false;
         }
     }

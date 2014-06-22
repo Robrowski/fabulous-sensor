@@ -22,37 +22,15 @@ namespace FabulousBrowserApp
         /// </summary>
         private BodyFrameReader BodyReader = null;
 
-        /// <summary>
-        /// The time of the first frame received
-        /// </summary>
-        private TimeSpan startTime;
-
-        /// <summary>
-        /// Next time to update FPS/frame time status
-        /// </summary>
-        private DateTime nextStatusUpdate = DateTime.MinValue;
-
-        /// <summary>
-        /// Number of frames since last FPS/frame time status
-        /// </summary>
-        private uint framesSinceUpdate = 0;
-
-        /// <summary>
-        /// Timer for FPS calculation
-        /// </summary>
-        private Stopwatch stopwatch = null;
 
         /// <summary>
         /// Array for the bodies
         /// </summary>
         private Body[] bodies = null;
 
-        Dictionary<String,JointInfo> jointInfos = null;
-
-        private double fps = 0.0;
 
         private HandsTracker handTracker = new HandsTracker(30,(float)1.0,(float)0.3);
-        private BoneAngleTracker tableFlipTracker = new BoneAngleTracker(30, (float) 1, 70);
+        private BoneAngleTracker tableFlipTracker = new BoneAngleTracker(30, (float) 1, -90);
 
         /// <summary>
         /// Handles the body frame data arriving from the sensor
@@ -70,33 +48,11 @@ namespace FabulousBrowserApp
 
                 if (frame != null)
                 {
+
                     // BodyFrame is IDisposable
                     using (frame)
                     {
-//                        this.framesSinceUpdate++;
-//
-//                        // update status unless last message is sticky for a while
-//                        if (DateTime.Now >= this.nextStatusUpdate)
-//                        {
-//                            // calcuate fps based on last frame received
-//                            fps = 0.0;
-//
-//                            if (this.stopwatch.IsRunning)
-//                            {
-//                                this.stopwatch.Stop();
-//                                fps = this.framesSinceUpdate / this.stopwatch.Elapsed.TotalSeconds;
-//                                this.stopwatch.Reset();
-//                            }
-//
-//                            this.nextStatusUpdate = DateTime.Now + TimeSpan.FromSeconds(1);
-////                            this.StatusText = string.Format(Properties.Resources.StandardStatusTextFormat, fps, frameReference.RelativeTime - this.startTime);
-//                        }
-//
-//                        if (!this.stopwatch.IsRunning)
-//                        {
-//                            this.framesSinceUpdate = 0;
-//                            this.stopwatch.Start();
-//                        }
+
                         if (this.bodies == null)
                         {
                             this.bodies = new Body[frame.BodyCount];
@@ -114,8 +70,7 @@ namespace FabulousBrowserApp
                                 IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
 
 
-                                if (tableFlipTracker.Record_elbow_and_wrist_positions(joints[JointType.HandRight],
-                                    joints[JointType.ElbowRight]))
+                                if (tableFlipTracker.Record_elbow_and_wrist_positions(joints[JointType.HandRight], joints[JointType.ElbowRight]))
                                 {
                                     Debug.WriteLine("Arm swiped");
                                 }
