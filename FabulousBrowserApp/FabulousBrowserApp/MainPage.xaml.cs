@@ -179,9 +179,17 @@ namespace FabulousBrowserApp
 
             foreach (StorageFile file in fileList)
             {
-                var fileContainer = new MyFileContainer(file);
-                fileContainer.Initialize();
-                FileSource.Add(fileContainer);
+                foreach (var fileExtension in _fileTypes)
+                {
+                    if (file.Name.ToLower().EndsWith(fileExtension))
+                    {
+                        var fileContainer = new MyFileContainer(file);
+                        fileContainer.Initialize();
+                        FileSource.Add(fileContainer);
+
+                        break;
+                    }
+                }
             }
 
             //foreach (var file in files.Where(file => _fileTypes.Any(filetype => file.ToLower().EndsWith(filetype))))
