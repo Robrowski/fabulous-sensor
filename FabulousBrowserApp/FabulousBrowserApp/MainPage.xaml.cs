@@ -167,6 +167,13 @@ namespace FabulousBrowserApp
             }
         }
 
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.BodyReader != null)
+            {
+                this.BodyReader.FrameArrived += this.Reader_FrameArrived;
+            }
+        }
 
 
         private async void InitFileSource()
@@ -239,6 +246,10 @@ namespace FabulousBrowserApp
 
             // open the sensor
             this.kinectSensor.Open();
+
+            // open the reader for the body frames
+            this.BodyReader = this.kinectSensor.BodyFrameSource.OpenReader();
+            this.BodyReader.FrameArrived += this.Reader_FrameArrived;
 
             // set the status text
             this.StatusText = this.kinectSensor.IsAvailable ? "RunningStatusText"
