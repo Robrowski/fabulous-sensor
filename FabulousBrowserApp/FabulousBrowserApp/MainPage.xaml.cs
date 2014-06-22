@@ -417,5 +417,23 @@ namespace FabulousBrowserApp
         {
             LbFileSource.SelectedIndex = -1;
         }
+
+
+
+        private void Flip()
+        {
+            Debug.WriteLine("Flip");
+        }
+
+        private void Swipe()
+        {
+            Debug.WriteLine("Swipe");
+
+            int newIndex = FvView.SelectedIndex + 1;
+            if (newIndex >= FvView.Items.Count)
+                newIndex = 0;
+
+            FvView.SelectedIndex = newIndex;
+        }
     }
 }

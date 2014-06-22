@@ -72,12 +72,12 @@ namespace FabulousBrowserApp
 
                                 if (tableFlipTracker.Record_elbow_and_wrist_positions(joints[JointType.HandRight], joints[JointType.ElbowRight]))
                                 {
-                                    Debug.WriteLine("Arm swiped");
+                                    Swipe();
                                 }
 
                                 if (handTracker.Record_hand_positions(joints[JointType.HandLeft], joints[JointType.HandRight]))
                                 {
-                                    Debug.WriteLine("flipped");
+                                    Flip();
                                 }
                             }
 
