@@ -77,6 +77,21 @@ namespace FabulousBrowserApp
         private string statusText = null;
 
         /// <summary>
+        /// Coordinate mapper to map one type of point to another
+        /// </summary>
+        private CoordinateMapper coordinateMapper = null;
+
+        /// <summary>
+        /// Reader for body frames
+        /// </summary>
+        private BodyFrameReader reader = null;
+
+        /// <summary>
+        /// Array for the bodies
+        /// </summary>
+        private Body[] bodies = null;
+
+        /// <summary>
         /// Gets or sets the current status text to display
         /// </summary>
         public string StatusText
@@ -141,7 +156,7 @@ namespace FabulousBrowserApp
 
             InitFileSource();
 
-            //InitKinect();
+            InitKinect();
         }
 
 
@@ -164,6 +179,15 @@ namespace FabulousBrowserApp
             {
                 this.kinectSensor.Close();
                 this.kinectSensor = null;
+            }
+        }
+
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.reader != null)
+            {
+                this.reader.FrameArrived += this.Reader_FrameArrived;
             }
         }
 
@@ -237,8 +261,14 @@ namespace FabulousBrowserApp
             // set IsAvailableChanged event notifier
             this.kinectSensor.IsAvailableChanged += this.Sensor_IsAvailableChanged;
 
+            this.coordinateMapper = this.kinectSensor.CoordinateMapper;
+
             // open the sensor
             this.kinectSensor.Open();
+
+            // open the reader for the body frames
+            this.reader = this.kinectSensor.BodyFrameSource.OpenReader();
+            this.reader.FrameArrived += this.Reader_FrameArrived;
 
             // set the status text
             this.StatusText = this.kinectSensor.IsAvailable ? "RunningStatusText"
@@ -256,12 +286,12 @@ namespace FabulousBrowserApp
         private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
         {
 
-            if (frameCounter <= frameSkip)
-            {
-                frameCounter ++;
-                return;
-            }
-            frameCounter = 0;
+            //if (frameCounter <= frameSkip)
+            //{
+            //    frameCounter ++;
+            //    return;
+            //}
+            //frameCounter = 0;
 
             //Debug.WriteLine("Reader ColorFrame Arrived");
             bool colorFrameProcessed = false;
@@ -298,6 +328,66 @@ namespace FabulousBrowserApp
         }
 
         /// <summary>
+        /// Handles the body frame data arriving from the sensor
+        /// </summary>
+        /// <param name="sender">object sending the event</param>
+        /// <param name="e">event arguments</param>
+        private void Reader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
+        {
+//            Debug.WriteLine("BODY HAS ARRIVED");
+            BodyFrameReference frameReference = e.FrameReference;
+
+            try
+            {
+                BodyFrame frame = frameReference.AcquireFrame();
+
+                if (frame != null)
+                {
+                    // BodyFrame is IDisposable
+                    using (frame)
+                    {
+                        if (this.bodies == null)
+                        {
+                            this.bodies = new Body[frame.BodyCount];
+                        }
+
+                        // The first time GetAndRefreshBodyData is called, Kinect will allocate each Body in the array.
+                        // As long as those body objects are not disposed and not set to null in the array,
+                        // those body objects will be re-used.
+                        frame.GetAndRefreshBodyData(this.bodies);
+
+                        foreach (Body body in this.bodies)
+                        {
+                            if (body.IsTracked)
+                            {
+
+                                IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
+
+                                // convert the joint points to depth (display) space
+                                Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
+                                foreach (JointType jointType in joints.Keys)
+                                {
+                                    var jointPose = joints[jointType].Position;
+                                    if (jointPose.ToString() == "HandRight")
+                                    {
+                                        Debug.WriteLine("JointXYZ: {0},{1},{2}", jointPose.X, jointPose.Y, jointPose.Z);
+                                    } 
+                                }
+
+                            }
+
+                        }
+                        
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignore if the frame is no longer available
+            }
+        }
+
+        /// <summary>
         /// Renders color pixels into the writeableBitmap.
         /// </summary>
         /// <param name="pixels">pixel data</param>
@@ -307,8 +397,8 @@ namespace FabulousBrowserApp
             colorPixelStream.Seek(0, SeekOrigin.Begin);
             colorPixelStream.Write(pixels, 0, pixels.Length);
             bitmap.Invalidate();
-            //OnPropertyChanged("ImageSource");
-//            ImgKinectTarget.Source = bitmap; // Removed from XAML
+            OnPropertyChanged("ImageSource");
+            ImgKinectTarget.Source = bitmap; // Removed from XAML
         }
 
         /// <summary>
