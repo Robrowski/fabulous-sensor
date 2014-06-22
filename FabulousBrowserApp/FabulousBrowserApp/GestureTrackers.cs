@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,18 +42,19 @@ namespace FabulousBrowserApp
         }
 
         // Returns true if both hands performed a table flip
-        public bool Record_hand_positions(JointInfo left, JointInfo right)
+        public bool Record_hand_positions(Joint left, Joint right)
         {
             // Check to make sure the hands are close enough vertically (X and Z ignored)
             // If they are too far apart, give up and reset to history
-            if (Math.Abs(left.Y - right.Y) > .1)
+            if (Math.Abs(left.Position.Y - right.Position.Y) > .08)
             {
+                Debug.WriteLine("Hands too far apart");
                 _verticalHandPositionHistory.Clear();
                 return false;
             }
 
             // Record the current hand position
-            float handPosition = (left.Y + right.Y)/2;
+            float handPosition = (left.Position.Y + right.Position.Y)/2;
             _verticalHandPositionHistory.Enqueue(handPosition);
             // Maintain queue size
             if (_verticalHandPositionHistory.Count > _maxHistorySize)
@@ -63,6 +65,8 @@ namespace FabulousBrowserApp
             // See if the desired displacement was achieved
             foreach (float f in _verticalHandPositionHistory)
             {
+
+//                Debug.WriteLine("Displacement: {0}", handPosition - f);
                 // If the displacement happened in recorded history, the gesture was achieved
                 /// TODO: use ratio of head to torso to centroid of body as reference for table flip displacement
                 if (handPosition - f > MinimumUpwardsDisplacement)
@@ -98,11 +102,11 @@ namespace FabulousBrowserApp
 
 
         // Return true if gesture happened. Queue is cleared
-        public bool Record_elbow_and_wrist_positions(JointInfo jointA, JointInfo jointB)
+        public bool Record_elbow_and_wrist_positions(Joint jointA, Joint jointB)
         {
             // Calculate and store the bone's angular position in the XY plane
-            float dX = jointA.X - jointB.X;
-            float dY = jointA.Y - jointB.Y;
+            float dX = jointA.Position.X - jointB.Position.X;
+            float dY = jointA.Position.Y - jointB.Position.Y;
             double angle = Math.Atan2(dY,dX);           
             _angleHistory.Enqueue(  angle*180/Math.PI); // store angle as degrees because
            

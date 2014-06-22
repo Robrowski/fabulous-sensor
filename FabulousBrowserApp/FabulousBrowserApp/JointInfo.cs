@@ -7,13 +7,20 @@ using WindowsPreview.Kinect;
 
 namespace FabulousBrowserApp
 {
-    class JointInfo
+    public class JointInfo
     {
-        private float X;
-        private float Y;
-        private float Z;
-        private float jointType;
+        public float X;
+        public float Y;
+        public float Z;
+        public float jointType;
 
+        public JointInfo(Joint joint)
+        {
+            this.X = joint.Position.X;
+            this.Y = joint.Position.Y;
+            this.Z = joint.Position.Z;
+        
+        }
         public void UpdateJoint(Joint joint)
         {
             this.X = joint.Position.X;
