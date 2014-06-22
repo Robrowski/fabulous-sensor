@@ -73,7 +73,7 @@ namespace FabulousBrowserApp
                 }
 
                 // Place the frame in the current Window, with a Kinect cursor layer + user viewer control
-                Window.Current.Content = KinectRegion.CreateHandPointerCursorLayer(rootFrame, HorizontalAlignment.Center, VerticalAlignment.Top);
+                Window.Current.Content = KinectRegion.CreateHandPointerCursorLayer(rootFrame, HorizontalAlignment.Right, VerticalAlignment.Bottom);
 
 
                 // Place the frame in the current Window
