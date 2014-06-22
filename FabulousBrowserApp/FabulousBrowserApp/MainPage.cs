@@ -84,6 +84,7 @@ namespace FabulousBrowserApp
                                     Debug.WriteLine("Arm swiped");
                                     lastGesture = frame.RelativeTime.TotalMilliseconds;
 
+                                    Swipe();
                                 }
 
                                 if (tableFlipGestureTracker.Record_hand_positions(joints[JointType.HandLeft], joints[JointType.HandRight]))
@@ -91,6 +92,7 @@ namespace FabulousBrowserApp
                                     Debug.WriteLine("flipped");
                                     lastGesture = frame.RelativeTime.TotalMilliseconds;
 
+                                    Flip();
                                 }
                             }
 
