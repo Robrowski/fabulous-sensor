@@ -6,8 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Name="FabWindow"
-    
-    Loaded="MainPage_OnLoaded"
     Unloaded="MainPage_Unloaded">
 
 
@@ -139,7 +137,7 @@
         <Grid x:Name="GrdExtendedView" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
             <Grid x:Name="GridFullImageRenderer">
                 <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
-                <Image x:Name="ImgB"/>
+                <Image x:Name="ImgKinectTarget" Source="{Binding ImageSource, ElementName=FabWindow}"/>
             </Grid>
             <Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
             <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>

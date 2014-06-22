@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -32,71 +33,14 @@ namespace FabulousBrowserApp
     /// </summary>
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
-        /// <summary>
-        /// The time of the first frame received
-        /// </summary>
-        private TimeSpan startTime;
-
-
-        /// <summary>
-        /// Next time to update FPS/frame time status
-        /// </summary>
-        private DateTime nextStatusUpdate = DateTime.MinValue;
-
-        /// <summary>
-        /// Number of frames since last FPS/frame time status
-        /// </summary>
-        private uint framesSinceUpdate = 0;
-
-        /// <summary>
-        /// Timer for FPS calculation
-        /// </summary>
-        private Stopwatch stopwatch = null;
-
 
         private int frameCounter = 0;
         private int frameSkip = 2;
-
+        private Random rnd = new Random();
         #region Variables
         readonly List<string> _fileTypes = new List<string> { "jpg", "jpeg", "tif", "tiff", "png", "gif" };
 
-        
 
-        /// <summary>
-        /// Coordinate mapper to map one type of point to another
-        /// </summary>
-        private CoordinateMapper coordinateMapper = null;
-
-        /// <summary>
-        /// Reader for depth/color/body index frames
-        /// </summary>
-        private MultiSourceFrameReader reader = null;
-
-        /// <summary>
-        /// Intermediate storage for receiving depth frame data from the sensor
-        /// </summary>
-        private ushort[] depthFrameData = null;
-
-        /// <summary>
-        /// Intermediate storage for receiving color frame data from the sensor
-        /// </summary>
-        private byte[] colorFrameData = null;
-
-        /// <summary>
-        /// Intermediate storage for receiving body index frame data from the sensor
-        /// </summary>
-        private byte[] bodyIndexFrameData = null;
-
-        /// <summary>
-        /// Intermediate storage for frame data converted to color
-        /// </summary>
-        private byte[] displayPixels = null;
-
-        /// <summary>
-        /// Intermediate storage for the depth to color mapping
-        /// </summary>
-        private ColorSpacePoint[] colorPoints = null;
-        
         /// <summary>
         /// Size of the RGB pixel in the bitmap
         /// </summary>
@@ -107,6 +51,10 @@ namespace FabulousBrowserApp
         /// </summary>
         private KinectSensor kinectSensor = null;
 
+        /// <summary>
+        /// Reader for color frames
+        /// </summary>
+        private ColorFrameReader colorFrameReader = null;
 
         /// <summary>
         /// Bitmap to display
@@ -182,7 +130,7 @@ namespace FabulousBrowserApp
 
         #endregion
 
-        
+
 
 
         public MainPage()
@@ -198,7 +146,26 @@ namespace FabulousBrowserApp
 
 
 
+        /// <summary>
+        /// Execute shutdown tasks.
+        /// </summary>
+        /// <param name="sender">object sending the event</param>
+        /// <param name="e">event arguments</param>
+        private void MainPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (this.colorFrameReader != null)
+            {
+                // ColorFrameReder is IDisposable
+                this.colorFrameReader.Dispose();
+                this.colorFrameReader = null;
+            }
 
+            if (this.kinectSensor != null)
+            {
+                this.kinectSensor.Close();
+                this.kinectSensor = null;
+            }
+        }
 
 
 
@@ -243,47 +210,39 @@ namespace FabulousBrowserApp
         {
             Debug.WriteLine("InitKinect");
 
-            // for Alpha, one sensor is supported
+            // get the kinectSensor object
             this.kinectSensor = KinectSensor.GetDefault();
 
-            if (this.kinectSensor != null)
-            {
-                // get the coordinate mapper
-                this.coordinateMapper = this.kinectSensor.CoordinateMapper;
+            // open the reader for the color frames
+            this.colorFrameReader = this.kinectSensor.ColorFrameSource.OpenReader();
 
-                // open the sensor
-                this.kinectSensor.Open();
+            // wire handler for frame arrival
+            this.colorFrameReader.FrameArrived += this.Reader_ColorFrameArrived;
 
-                FrameDescription depthFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+            // create the colorFrameDescription from the ColorFrameSource using rgba format
+            FrameDescription colorFrameDescription = this.kinectSensor.ColorFrameSource.CreateFrameDescription(ColorImageFormat.Rgba);
 
-                int depthWidth = depthFrameDescription.Width;
-                int depthHeight = depthFrameDescription.Height;
+            // rgba is 4 bytes per pixel
+            this.bytesPerPixel = colorFrameDescription.BytesPerPixel;
 
-                // allocate space to put the pixels being received and converted
-                this.depthFrameData = new ushort[depthWidth*depthHeight];
-                this.bodyIndexFrameData = new byte[depthWidth*depthHeight];
-                this.displayPixels = new byte[depthWidth*depthHeight*this.bytesPerPixel];
-                this.colorPoints = new ColorSpacePoint[depthWidth*depthHeight];
+            // allocate space to put the pixels to be rendered
+            this.colorPixels = new byte[colorFrameDescription.Width * colorFrameDescription.Height * this.bytesPerPixel];
 
-
-                FrameDescription colorFrameDescription = this.kinectSensor.ColorFrameSource.FrameDescription;
             // create the bitmap to display
             this.bitmap = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height);
 
-                int colorWidth = colorFrameDescription.Width;
-                int colorHeight = colorFrameDescription.Height;
+            // get the pixelStream for the writeableBitmap
+            this.colorPixelStream = this.bitmap.PixelBuffer.AsStream();
 
-                // allocate space to put the pixels being received
-                this.colorFrameData = new byte[colorWidth*colorHeight*this.bytesPerPixel];
+            // set IsAvailableChanged event notifier
+            this.kinectSensor.IsAvailableChanged += this.Sensor_IsAvailableChanged;
 
-                this.reader =
-                    this.kinectSensor.OpenMultiSourceFrameReader(FrameSourceTypes.Depth | FrameSourceTypes.Color |
-                                                                 FrameSourceTypes.BodyIndex);
+            // open the sensor
+            this.kinectSensor.Open();
 
             // set the status text
             this.StatusText = this.kinectSensor.IsAvailable ? "RunningStatusText"
                                                             : "NoSensorStatusText";
-        }
         }
 
 
@@ -296,15 +255,16 @@ namespace FabulousBrowserApp
         /// <param name="e">event arguments</param>
         private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
         {
-
-            if (frameCounter <= frameSkip)
-            {
-                frameCounter++;
-                return;
-            }
-            frameCounter = 0;
-
             //Debug.WriteLine("Reader ColorFrame Arrived");
+            //if (frameCounter <= frameSkip)
+            //{
+            //    frameCounter++;
+            //    //Debug.WriteLine("\tIgnoring");
+            //    return;
+            //}
+            //frameCounter = 0;
+
+            
             bool colorFrameProcessed = false;
 
             // ColorFrame is IDisposable
@@ -348,8 +308,9 @@ namespace FabulousBrowserApp
             colorPixelStream.Seek(0, SeekOrigin.Begin);
             colorPixelStream.Write(pixels, 0, pixels.Length);
             bitmap.Invalidate();
-            //OnPropertyChanged("ImageSource");
-//            ImgKinectTarget.Source = bitmap; // Removed from XAML
+            //ImgKinectTarget.Source = bitmap; // Removed from XAML
+            OnPropertyChanged("ImageSource");
+            
         }
 
         /// <summary>
@@ -364,8 +325,6 @@ namespace FabulousBrowserApp
                                                             : "SensorNotAvailableStatusText";
         }
 
-        #region Prop Changed
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -374,10 +333,6 @@ namespace FabulousBrowserApp
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        #endregion
-
-        #region Button Clicks
 
         private void PrevBtn_OnClick(object sender, RoutedEventArgs e)
         {
@@ -388,9 +343,9 @@ namespace FabulousBrowserApp
             var next = Math.Abs(index % size);
             if (index == -1)
                 next = size - 1;
-            
+
             LbFileSource.SelectedIndex = next;
-            Debug.WriteLine("index is {0}, next is{1}",index, next);
+            Debug.WriteLine("index is {0}, next is{1}", index, next);
         }
 
         private void NextBtn_OnClick(object sender, RoutedEventArgs e)
@@ -399,220 +354,17 @@ namespace FabulousBrowserApp
             var size = LbFileSource.Items.Count;
 
             index++;
-            var next = index%size;
+            var next = index % size;
             LbFileSource.SelectedIndex = next;
-//            Debug.WriteLine("index is {0}", next);
+            //            Debug.WriteLine("index is {0}", next);
         }
-    }
 
-        #endregion
-
-        private void MainPage_OnLoaded(object sender, RoutedEventArgs e)
-    {
-            if (this.reader != null)
+        private void YOLOBTN_OnClick(object sender, RoutedEventArgs e)
         {
-                this.reader.MultiSourceFrameArrived += this.Reader_MultiSourceFrameArrived;
-            }
+            var size = LbFileSource.Items.Count;
+            LbFileSource.SelectedIndex = rnd.Next(0, size);
+            //            Debug.WriteLine("index is {0}", next);
         }
 
-        /// <summary>
-        /// Execute shutdown tasks.
-        /// </summary>
-        /// <param name="sender">object sending the event</param>
-        /// <param name="e">event arguments</param>
-        private void MainPage_Unloaded(object sender, RoutedEventArgs e)
-        {
-            //if (this.colorFrameReader != null)
-            //{
-            //    // ColorFrameReder is IDisposable
-            //    this.colorFrameReader.Dispose();
-            //    this.colorFrameReader = null;
-            //}
-
-            //if (this.kinectSensor != null)
-            //{
-            //    this.kinectSensor.Close();
-            //    this.kinectSensor = null;
-            //}
-
-            if (this.reader != null)
-            {
-                // MultiSourceFrameReder is IDisposable
-                this.reader.Dispose();
-                this.reader = null;
-            }
-
-            if (this.kinectSensor != null)
-            {
-                this.kinectSensor.Close();
-                this.kinectSensor = null;
-            }
-        }
-
-        /// <summary>
-        /// Handles the depth/color/body index frame data arriving from the sensor
-        /// </summary>
-        /// <param name="sender">object sending the event</param>
-        /// <param name="e">event arguments</param>
-        private void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
-        {
-            MultiSourceFrameReference frameReference = e.FrameReference;
-
-            MultiSourceFrame multiSourceFrame = null;
-            DepthFrame depthFrame = null;
-            ColorFrame colorFrame = null;
-            BodyIndexFrame bodyIndexFrame = null;
-
-            try
-            {
-                multiSourceFrame = frameReference.AcquireFrame();
-
-                if (multiSourceFrame != null)
-        {
-                    DepthFrameReference depthFrameReference = multiSourceFrame.DepthFrameReference;
-                    ColorFrameReference colorFrameReference = multiSourceFrame.ColorFrameReference;
-                    BodyIndexFrameReference bodyIndexFrameReference = multiSourceFrame.BodyIndexFrameReference;
-            
-                    if (this.startTime.Ticks == 0)
-                    {
-                        this.startTime = depthFrameReference.RelativeTime;
-        }
-
-                    depthFrame = depthFrameReference.AcquireFrame();
-                    colorFrame = colorFrameReference.AcquireFrame();
-                    bodyIndexFrame = bodyIndexFrameReference.AcquireFrame();
-
-                    if ((depthFrame != null) && (colorFrame != null) && (bodyIndexFrame != null))
-                    {
-                        this.framesSinceUpdate++;
-
-                        FrameDescription depthFrameDescription = depthFrame.FrameDescription;
-                        FrameDescription colorFrameDescription = colorFrame.FrameDescription;
-                        FrameDescription bodyIndexFrameDescription = bodyIndexFrame.FrameDescription;
-
-                        // update status unless last message is sticky for a while
-                        if (DateTime.Now >= this.nextStatusUpdate)
-        {
-                            // calcuate fps based on last frame received
-                            double fps = 0.0;
-
-                            if (this.stopwatch.IsRunning)
-            {
-                                this.stopwatch.Stop();
-                                fps = this.framesSinceUpdate / this.stopwatch.Elapsed.TotalSeconds;
-                                this.stopwatch.Reset();
-            }
-
-                            this.nextStatusUpdate = DateTime.Now + TimeSpan.FromSeconds(1);
-                            this.StatusText = string.Format("FPS: {0} -- Time: {1}", fps, depthFrameReference.RelativeTime - this.startTime);
-        }
-
-                        if (!this.stopwatch.IsRunning)
-            {
-                            this.framesSinceUpdate = 0;
-                            this.stopwatch.Start();
-        }
-
-                        int depthWidth = depthFrameDescription.Width;
-                        int depthHeight = depthFrameDescription.Height;
-
-                        int colorWidth = colorFrameDescription.Width;
-                        int colorHeight = colorFrameDescription.Height;
-
-                        int bodyIndexWidth = bodyIndexFrameDescription.Width;
-                        int bodyIndexHeight = bodyIndexFrameDescription.Height;
-
-                        // verify data and write the new registered frame data to the display bitmap
-                        if (((depthWidth * depthHeight) == this.depthFrameData.Length) &&
-                            ((colorWidth * colorHeight * this.bytesPerPixel) == this.colorFrameData.Length) &&
-                            ((bodyIndexWidth * bodyIndexHeight) == this.bodyIndexFrameData.Length))
-        {
-                            depthFrame.CopyFrameDataToArray(this.depthFrameData);
-                            if (colorFrame.RawColorImageFormat == ColorImageFormat.Bgra)
-            {
-                                colorFrame.CopyRawFrameDataToArray(this.colorFrameData);
-            }
-                            else
-                            {
-                                colorFrame.CopyConvertedFrameDataToArray(this.colorFrameData, ColorImageFormat.Bgra);
-        }
-
-                            bodyIndexFrame.CopyFrameDataToArray(this.bodyIndexFrameData);
-
-                            this.coordinateMapper.MapDepthFrameToColorSpace(this.depthFrameData, this.colorPoints);
-
-                            Array.Clear(this.displayPixels, 0, this.displayPixels.Length);
-
-                            // loop over each row and column of the depth
-                            for (int y = 0; y < depthHeight; ++y)
-                            {
-                                for (int x = 0; x < depthWidth; ++x)
-        {
-                                    // calculate index into depth array
-                                    int depthIndex = (y * depthWidth) + x;
-
-                                    byte player = this.bodyIndexFrameData[depthIndex];
-
-                                    // if we're tracking a player for the current pixel, sets its color and alpha to full
-                                    if (player != 0xff)
-                                    {
-                                        // retrieve the depth to color mapping for the current depth pixel
-                                        ColorSpacePoint colorPoint = this.colorPoints[depthIndex];
-
-                                        // make sure the depth pixel maps to a valid point in color space
-                                        int colorX = (int)Math.Floor(colorPoint.X + 0.5);
-                                        int colorY = (int)Math.Floor(colorPoint.Y + 0.5);
-                                        if ((colorX >= 0) && (colorX < colorWidth) && (colorY >= 0) && (colorY < colorHeight))
-                                        {
-                                            // calculate index into color array
-                                            int colorIndex = (int)(((colorY * colorWidth) + colorX) * this.bytesPerPixel);
-
-                                            // set source for copy to the color pixel
-                                            int displayIndex = (int)(depthIndex * this.bytesPerPixel);
-                                            this.displayPixels[displayIndex] = this.colorFrameData[colorIndex];
-                                            this.displayPixels[displayIndex + 1] = this.colorFrameData[colorIndex + 1];
-                                            this.displayPixels[displayIndex + 2] = this.colorFrameData[colorIndex + 2];
-                                            this.displayPixels[displayIndex + 3] = 0xff;
-                                        }
-                                    }
-                                }
-                            }
-
-                            RenderColorPixels(displayPixels);
-
-                            //this.bitmap.WritePixels(new Int32Rect(0, 0, depthWidth, depthHeight),
-                            //                        this.displayPixels,
-                            //                        depthWidth * this.bytesPerPixel,
-                            //                        0);
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignore if the frame is no longer available
-            }
-            finally
-            {
-                // DepthFrame, ColorFrame, BodyIndexFrame are IDispoable
-                if (depthFrame != null)
-        {
-                    depthFrame.Dispose();
-                    depthFrame = null;
-        }
-
-                if (colorFrame != null)
-                {
-                    colorFrame.Dispose();
-                    colorFrame = null;
-                }
-
-                if (bodyIndexFrame != null)
-                {
-                    bodyIndexFrame.Dispose();
-                    bodyIndexFrame = null;
-                }
-            }
-        }
     }
 }
