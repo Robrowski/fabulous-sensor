@@ -114,10 +114,10 @@
 
             </Grid.Resources>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid x:Name="GrdFileNav">
+            <Grid x:Name="GrdFileNav" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -129,6 +129,7 @@
                 <Button Content="YOLO" Grid.Column="2" Click="YOLOBTN_OnClick"/>  
                 <Button Content="Forward" Grid.Column="3"/>
             </Grid>
+            <TextBlock Grid.Row="0" Text="Power Doge" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15" FontSize="42"></TextBlock>
 
             <ListBox x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}" 
                           Style="{StaticResource CompactFileViewerItemsControlStyle}" Background="{x:Null}" BorderBrush="{x:Null}"
