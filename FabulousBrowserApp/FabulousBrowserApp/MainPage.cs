@@ -52,6 +52,7 @@ namespace FabulousBrowserApp
         private double fps = 0.0;
 
         private HandsTracker handTracker = new HandsTracker(30,(float)1.0,(float)0.3);
+        private BoneAngleTracker tableFlipTracker = new BoneAngleTracker(30, (float) 1, 70);
 
         /// <summary>
         /// Handles the body frame data arriving from the sensor
@@ -108,37 +109,20 @@ namespace FabulousBrowserApp
 
                         foreach (Body body in this.bodies)
                         {
-//                            Debug.WriteLine("BODY");
                             if (body.IsTracked)
                             {
-//                                Debug.WriteLine("TRACKED");
                                 IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
 
-                                // convert the joint points to depth (display) space
-//                                Dictionary<JointType, Point> jointPoints = new Dictionary<JointType, Point>();
 
-
-                                foreach (JointType jointType in joints.Keys)
+                                if (tableFlipTracker.Record_elbow_and_wrist_positions(joints[JointType.HandRight],
+                                    joints[JointType.ElbowRight]))
                                 {
-//                                    Debug.WriteLine(jointType.ToString());
-
-//                                    if (jointInfos.ContainsKey(jointType.ToString()))
-//                                    {
-//                                        Debug.WriteLine(jointType.ToString());
-//////                                        jointInfos[jointType.ToString()].UpdateJoint(joints[jointType]);
-//                                    }
-
- 
+                                    Debug.WriteLine("Arm swiped");
                                 }
-//
-//                                Debug.WriteLine("X: {0}, Y{1}, Z{2}", joints[JointType.HandRight].Position.X,
-//                                     joints[JointType.HandRight].Position.Y,
-//                                      joints[JointType.HandRight].Position.Z);
-                                var happened = handTracker.Record_hand_positions(joints[JointType.HandLeft], joints[JointType.HandRight]);
 
-                                if (happened)
+                                if (handTracker.Record_hand_positions(joints[JointType.HandLeft], joints[JointType.HandRight]))
                                 {
-                                    Debug.WriteLine("flipped{0}", happened);
+                                    Debug.WriteLine("flipped");
                                 }
                             }
 
