@@ -179,9 +179,17 @@ namespace FabulousBrowserApp
 
             foreach (StorageFile file in fileList)
             {
-                var fileContainer = new MyFileContainer(file);
-                fileContainer.Initialize();
-                FileSource.Add(fileContainer);
+                foreach (var fileExtension in _fileTypes)
+                {
+                    if (file.Name.ToLower().EndsWith(fileExtension))
+                    {
+                        var fileContainer = new MyFileContainer(file);
+                        fileContainer.Initialize();
+                        FileSource.Add(fileContainer);
+
+                        break;
+                    }
+                }
             }
 
             //foreach (var file in files.Where(file => _fileTypes.Any(filetype => file.ToLower().EndsWith(filetype))))
@@ -322,6 +330,28 @@ namespace FabulousBrowserApp
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void PrevBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            var index = LbFileSource.SelectedIndex;
+            var size = LbFileSource.Items.Count;
+
+            index--;
+            var next = Math.Abs(index % size);
+            LbFileSource.SelectedIndex = next;
+            Debug.WriteLine("index is {0}", next);
+        }
+
+        private void NextBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            var index = LbFileSource.SelectedIndex;
+            var size = LbFileSource.Items.Count;
+
+            index++;
+            var next = index % size;
+            LbFileSource.SelectedIndex = next;
+//            Debug.WriteLine("index is {0}", next);
         }
     }
 

@@ -123,7 +123,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Content="Back" Grid.Column="0"/>
+                <Button Content="Back" Grid.Column="0" />
                 <Button Content="Home" Grid.Column="1"/>
                 <Button Content="Forward" Grid.Column="2"/>
             </Grid>
@@ -137,8 +137,8 @@
                 <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
                 <Image x:Name="ImgB"/>
             </Grid>
-            <Button HorizontalAlignment="Left" Content="Previous Image"/>
-            <Button HorizontalAlignment="Right" Content="Next Image"/>
+            <Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
+            <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>
             <Grid x:Name="GrdKinectPreview" 
                   VerticalAlignment="Bottom" 
                   HorizontalAlignment="Right" 
