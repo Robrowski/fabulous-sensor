@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Name="FabWindow"
+    Loaded="MainWindow_Loaded"
     Unloaded="MainPage_Unloaded">
 
 
@@ -151,5 +152,7 @@
             <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>-->
             <TextBlock Height="30" VerticalAlignment="Bottom" Text="{Binding FilePath}"/>
         </Grid>
+        
+        <Grid Name="FlipGrid" Background="Red" Grid.ColumnSpan="5" Grid.RowSpan="5" Visibility="Collapsed"/>
     </Grid>
 </Page>

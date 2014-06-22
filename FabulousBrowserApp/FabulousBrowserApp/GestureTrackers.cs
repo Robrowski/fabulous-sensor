@@ -46,7 +46,7 @@ namespace FabulousBrowserApp
         {
             // Check to make sure the hands are close enough vertically (X and Z ignored)
             // If they are too far apart, give up and reset to history
-            if (Math.Abs(left.Position.Y - right.Position.Y) > .07)
+            if (Math.Abs(left.Position.Y - right.Position.Y) > .10)
             {
                 _verticalHandPositionHistory.Clear();
                 return false;
@@ -106,12 +106,11 @@ namespace FabulousBrowserApp
             float dY = jointA.Position.Y - jointB.Position.Y;
             double angle = Math.Atan2(dY, dX) * 180 / Math.PI;
 
-//            Debug.WriteLine("Angle: {0}", angle);
-
-            if (angle < -10 && angle > 179)
-            {
-                return false;
-            }
+            // Limits 
+            //if (angle < 10 && angle > 179)
+            //{
+            //    return false;
+            //}
             _angleHistory.Enqueue(angle); // store angle as degrees because
 
 

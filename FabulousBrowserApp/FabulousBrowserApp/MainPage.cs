@@ -32,9 +32,9 @@ namespace FabulousBrowserApp
         private double lastGesture = 0;
 
 
-        private HandsTracker tableFlipGestureTracker = new HandsTracker(30,(float)1.1,(float)0.4);
-        private BoneAngleTracker rightSwipeGestureTracker = new BoneAngleTracker(30, (float) 1, -90);
-        private BoneAngleTracker leftSwipeGestureTracker  = new BoneAngleTracker(30, (float)1, 90);
+        private HandsTracker tableFlipGestureTracker = new HandsTracker(30,(float)1.4,(float) 0.2);
+        private BoneAngleTracker rightSwipeGestureTracker = new BoneAngleTracker(30, (float) 1, -100);
+        private BoneAngleTracker leftSwipeGestureTracker  = new BoneAngleTracker(30, (float)1, 100);
 
 
 
@@ -76,19 +76,19 @@ namespace FabulousBrowserApp
                                 IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
 
 
-                                if (rightSwipeGestureTracker.Record_elbow_and_wrist_positions(joints[JointType.HandRight], joints[JointType.ElbowRight]))
+                                if (rightSwipeGestureTracker.Record_elbow_and_wrist_positions(joints[JointType.WristRight], joints[JointType.ElbowRight]))
                                 {
                                     Swipe("right");
                                 }
 
-                                if (tableFlipGestureTracker.Record_hand_positions(joints[JointType.HandLeft], joints[JointType.HandRight]))
+                                if (tableFlipGestureTracker.Record_hand_positions(joints[JointType.WristRight], joints[JointType.WristLeft]))
                                 {
                                     //Debug.WriteLine("flipped");
                                     Flip();
                                 }
 
                                 if (leftSwipeGestureTracker.Record_elbow_and_wrist_positions(
-                                    joints[JointType.HandLeft], joints[JointType.ElbowLeft]))
+                                    joints[JointType.WristLeft], joints[JointType.ElbowLeft]))
                                 {
                                     Swipe("left");
                                 }

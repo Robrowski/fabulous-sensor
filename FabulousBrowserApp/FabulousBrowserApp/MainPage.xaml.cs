@@ -169,10 +169,13 @@ namespace FabulousBrowserApp
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.BodyReader != null)
-            {
-                this.BodyReader.FrameArrived += this.Reader_FrameArrived;
-            }
+            //if (this.BodyReader != null)
+            //{
+            //    this.BodyReader.FrameArrived += this.Reader_FrameArrived;
+            //}
+
+
+            LbFileSource.SelectedIndex = 0;
         }
 
 
@@ -254,6 +257,8 @@ namespace FabulousBrowserApp
             // set the status text
             this.StatusText = this.kinectSensor.IsAvailable ? "RunningStatusText"
                                                             : "NoSensorStatusText";
+           
+                                                            
         }
 
 
@@ -419,9 +424,9 @@ namespace FabulousBrowserApp
         }
 
         private DateTime lastAcceptedGesture = DateTime.MinValue;
-        private bool GestureDelay()
+        private bool GestureDelay(long interval = 1500)
         {
-            if (DateTime.Now.Subtract(lastAcceptedGesture).TotalMilliseconds > TimeSpan.FromMilliseconds(2000).TotalMilliseconds)
+            if (DateTime.Now.Subtract(lastAcceptedGesture).TotalMilliseconds > TimeSpan.FromMilliseconds(interval).TotalMilliseconds)
             {
                 lastAcceptedGesture = DateTime.Now;
                 return true;
@@ -431,6 +436,12 @@ namespace FabulousBrowserApp
 
         private void Flip()
         {
+            if (!GestureDelay()) return;
+            if (FlipGrid.Visibility == Windows.UI.Xaml.Visibility.Visible)
+                FlipGrid.Visibility = Visibility.Collapsed;
+            else
+                FlipGrid.Visibility = Visibility.Visible;
+
             Debug.WriteLine("Flip");
         }
 
@@ -438,26 +449,28 @@ namespace FabulousBrowserApp
         {
             if (!GestureDelay()) return;
 
+            FlipGrid.Visibility = Visibility.Collapsed;
+
             Debug.WriteLine("Swipe " + direction);
             if (direction == "left")
             {
-                var index = FvView.SelectedIndex;
-                var size = FvView.Items.Count;
+                var index = LbFileSource.SelectedIndex;
+                var size = LbFileSource.Items.Count;
 
                 index--;
                 var next = Math.Abs(index % size);
                 if (index == -1)
                     next = size - 1;
 
-                FvView.SelectedIndex = next;
+                LbFileSource.SelectedIndex = next;
             }
             else
             {
-                int newIndex = FvView.SelectedIndex + 1;
-                if (newIndex >= FvView.Items.Count)
+                int newIndex = LbFileSource.SelectedIndex + 1;
+                if (newIndex >= LbFileSource.Items.Count)
                     newIndex = 0;
 
-                FvView.SelectedIndex = newIndex;
+                LbFileSource.SelectedIndex = newIndex;
             }
            
         }
