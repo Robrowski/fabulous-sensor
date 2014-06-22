@@ -130,7 +130,7 @@
                 <Button Content="Forward" Grid.Column="3"/>
             </Grid>
 
-            <ListBox x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}"
+            <ListBox x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}" 
                           Style="{StaticResource CompactFileViewerItemsControlStyle}" Background="{x:Null}" BorderBrush="{x:Null}"/>
         </Grid>
 
