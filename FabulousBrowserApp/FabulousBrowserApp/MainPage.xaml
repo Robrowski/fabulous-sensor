@@ -9,12 +9,11 @@
     Unloaded="MainPage_Unloaded">
 
 
-    <Grid Background="MediumVioletRed">
+    <Grid Background="#a20ee7">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="500"/>
+            <ColumnDefinition x:Name="FileManager" Width="500"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
         <Grid>
             <Grid.Resources>
                 <Style x:Key="CompactFileViewerElementStyle" TargetType="GridViewItem">
@@ -66,7 +65,7 @@
                                             <ColumnDefinition Width="100" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid x:Name="GrdThumbnailContainer" Background="Blue" Grid.Column="0">
+                                        <Grid x:Name="GrdThumbnailContainer" Grid.Column="0">
                                             <Image x:Name="ImgThumbnail" Stretch="UniformToFill" VerticalAlignment="Center"
                                                    HorizontalAlignment="Center" Source="{Binding ImageSource}" />
                                         </Grid>
