@@ -425,15 +425,30 @@ namespace FabulousBrowserApp
             Debug.WriteLine("Flip");
         }
 
-        private void Swipe()
+        private void Swipe(String direction)
         {
             Debug.WriteLine("Swipe");
+            if (direction == "left")
+            {
+                var index = FvView.SelectedIndex;
+                var size = FvView.Items.Count;
 
-            int newIndex = FvView.SelectedIndex + 1;
-            if (newIndex >= FvView.Items.Count)
-                newIndex = 0;
+                index--;
+                var next = Math.Abs(index % size);
+                if (index == -1)
+                    next = size - 1;
 
-            FvView.SelectedIndex = newIndex;
+                FvView.SelectedIndex = next;
+            }
+            else
+            {
+                int newIndex = FvView.SelectedIndex + 1;
+                if (newIndex >= FvView.Items.Count)
+                    newIndex = 0;
+
+                FvView.SelectedIndex = newIndex;
+            }
+           
         }
     }
 }
