@@ -145,7 +145,7 @@
                         </DataTemplate>
                     </FlipView.ItemTemplate>
                 </FlipView>
-                <Image x:Name="ImgKinectTarget" Source="{Binding ImageSource, ElementName=FabWindow}"/>
+                <Image x:Name="ImgKinectTarget" Source="{Binding ImageSource, ElementName=FabWindow}" IsHitTestVisible="False"/>
             </Grid>
             <!--<Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
             <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>-->
