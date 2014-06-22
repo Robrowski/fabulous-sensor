@@ -308,7 +308,7 @@ namespace FabulousBrowserApp
             colorPixelStream.Write(pixels, 0, pixels.Length);
             bitmap.Invalidate();
             //OnPropertyChanged("ImageSource");
-            ImgKinectTarget.Source = bitmap;
+//            ImgKinectTarget.Source = bitmap; // Removed from XAML
         }
 
         /// <summary>

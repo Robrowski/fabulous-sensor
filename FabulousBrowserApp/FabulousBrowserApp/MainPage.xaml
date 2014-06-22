@@ -10,7 +10,7 @@
     Unloaded="MainPage_Unloaded">
 
 
-    <Grid>
+    <Grid Background="MediumVioletRed">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="500"/>
             <ColumnDefinition Width="*"/>
@@ -140,13 +140,6 @@
             </Grid>
             <Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
             <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>
-            <Grid x:Name="GrdKinectPreview" 
-                  VerticalAlignment="Bottom" 
-                  HorizontalAlignment="Right" 
-                  Height="350" Width="400" Background="Green" IsHitTestVisible="False">
-                <Image Name="ImgKinectTarget" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <!-- Source="{Binding ImageSource, ElementName=FabWindow}" -->
-            </Grid>
             <TextBlock Height="30" VerticalAlignment="Bottom" Text="{Binding FilePath}"/>
         </Grid>
     </Grid>
