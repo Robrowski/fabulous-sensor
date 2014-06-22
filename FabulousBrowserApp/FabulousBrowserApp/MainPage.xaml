@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Name="FabWindow"
-    
     Unloaded="MainPage_Unloaded">
 
 
@@ -131,14 +130,14 @@
                 <Button Content="Forward" Grid.Column="3"/>
             </Grid>
 
-            <ListBox x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}"
+            <ListBox x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}" 
                           Style="{StaticResource CompactFileViewerItemsControlStyle}" Background="{x:Null}" BorderBrush="{x:Null}"/>
         </Grid>
 
         <Grid x:Name="GrdExtendedView" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
             <Grid x:Name="GridFullImageRenderer">
                 <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
-                <Image x:Name="ImgB"/>
+                <Image x:Name="ImgKinectTarget" Source="{Binding ImageSource, ElementName=FabWindow}"/>
             </Grid>
             <Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
             <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>

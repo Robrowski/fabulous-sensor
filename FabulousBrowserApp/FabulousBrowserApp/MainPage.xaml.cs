@@ -40,7 +40,7 @@ namespace FabulousBrowserApp
         #region Variables
         readonly List<string> _fileTypes = new List<string> { "jpg", "jpeg", "tif", "tiff", "png", "gif" };
 
-        
+
         /// <summary>
         /// Size of the RGB pixel in the bitmap
         /// </summary>
@@ -130,7 +130,7 @@ namespace FabulousBrowserApp
 
         #endregion
 
-        
+
 
 
         public MainPage()
@@ -141,7 +141,7 @@ namespace FabulousBrowserApp
 
             InitFileSource();
 
-            //InitKinect();
+            InitKinect();
         }
 
 
@@ -167,6 +167,13 @@ namespace FabulousBrowserApp
             }
         }
 
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.BodyReader != null)
+            {
+                this.BodyReader.FrameArrived += this.Reader_FrameArrived;
+            }
+        }
 
 
         private async void InitFileSource()
@@ -240,6 +247,10 @@ namespace FabulousBrowserApp
             // open the sensor
             this.kinectSensor.Open();
 
+            // open the reader for the body frames
+            this.BodyReader = this.kinectSensor.BodyFrameSource.OpenReader();
+            this.BodyReader.FrameArrived += this.Reader_FrameArrived;
+
             // set the status text
             this.StatusText = this.kinectSensor.IsAvailable ? "RunningStatusText"
                                                             : "NoSensorStatusText";
@@ -255,15 +266,16 @@ namespace FabulousBrowserApp
         /// <param name="e">event arguments</param>
         private void Reader_ColorFrameArrived(object sender, ColorFrameArrivedEventArgs e)
         {
-
-            if (frameCounter <= frameSkip)
-            {
-                frameCounter ++;
-                return;
-            }
-            frameCounter = 0;
-
             //Debug.WriteLine("Reader ColorFrame Arrived");
+            //if (frameCounter <= frameSkip)
+            //{
+            //    frameCounter++;
+            //    //Debug.WriteLine("\tIgnoring");
+            //    return;
+            //}
+            //frameCounter = 0;
+
+            
             bool colorFrameProcessed = false;
 
             // ColorFrame is IDisposable
@@ -307,8 +319,9 @@ namespace FabulousBrowserApp
             colorPixelStream.Seek(0, SeekOrigin.Begin);
             colorPixelStream.Write(pixels, 0, pixels.Length);
             bitmap.Invalidate();
-            //OnPropertyChanged("ImageSource");
-//            ImgKinectTarget.Source = bitmap; // Removed from XAML
+            //ImgKinectTarget.Source = bitmap; // Removed from XAML
+            OnPropertyChanged("ImageSource");
+            
         }
 
         /// <summary>
@@ -336,14 +349,14 @@ namespace FabulousBrowserApp
         {
             var index = LbFileSource.SelectedIndex;
             var size = LbFileSource.Items.Count;
-            
+
             index--;
             var next = Math.Abs(index % size);
             if (index == -1)
                 next = size - 1;
-            
+
             LbFileSource.SelectedIndex = next;
-            Debug.WriteLine("index is {0}, next is{1}",index, next);
+            Debug.WriteLine("index is {0}, next is{1}", index, next);
         }
 
         private void NextBtn_OnClick(object sender, RoutedEventArgs e)
@@ -354,108 +367,15 @@ namespace FabulousBrowserApp
             index++;
             var next = index % size;
             LbFileSource.SelectedIndex = next;
-//            Debug.WriteLine("index is {0}", next);
+            //            Debug.WriteLine("index is {0}", next);
         }
 
         private void YOLOBTN_OnClick(object sender, RoutedEventArgs e)
         {
             var size = LbFileSource.Items.Count;
-            LbFileSource.SelectedIndex = rnd.Next(0,size);
+            LbFileSource.SelectedIndex = rnd.Next(0, size);
             //            Debug.WriteLine("index is {0}", next);
         }
-    }
 
-
-    public sealed class MyFileContainer : INotifyPropertyChanged
-    {
-        public MyFileContainer(StorageFile filePath)
-        {
-            _originalFile = filePath;
-
-            FilePath = filePath.Path;
-
-            var length = filePath.Name.LastIndexOf(".");
-
-            ShortName = filePath.Name.Substring(0, length);
-
-#if DEBUG
-            Debug.WriteLine("New FileContainer:\n\tFile Source: {0}\n\tShort Name: {1}\n\tImageSource: {2}", FilePath, ShortName, ImageSource);
-#endif
-        }
-
-        public async void Initialize()
-        {
-            var file = await Windows.Storage.KnownFolders.PicturesLibrary.GetFileAsync(_originalFile.Name);
-            var stream = await file.OpenReadAsync();
-            var bi = new BitmapImage();
-            bi.SetSource(stream);
-            
-            ImageSource = bi;
-        }
-
-
-        private string _filePath;
-        private string _shortName;
-        private BitmapImage _imageSource;
-        private StorageFile _originalFile;
-
-
-        public string FilePath
-        {
-            get { return _filePath; }
-            set
-            {
-                if (value == _filePath) return;
-                _filePath = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string ShortName
-        {
-            get { return _shortName; }
-            set
-            {
-                if (value == _shortName) return;
-                _shortName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public BitmapImage ImageSource
-        {
-            get { return _imageSource; }
-            set
-            {
-                if (Equals(value, _imageSource)) return;
-                _imageSource = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public async static Task<BitmapImage> ImageFromRelativePath(StorageFile storageFile)
-        {
-            var file = await Windows.Storage.KnownFolders.PicturesLibrary.GetFileAsync(storageFile.Name);
-            var stream = await file.OpenReadAsync();
-            var bi = new BitmapImage();
-            bi.SetSource(stream);
-
-            return bi;
-        }
-
-        #region Property Changed
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
-        #endregion
     }
 }
