@@ -32,8 +32,11 @@ namespace FabulousBrowserApp
         private double lastGesture = 0;
 
 
-        private HandsTracker tableFlipGestureTracker = new HandsTracker(30,(float)1.0,(float)0.3);
-        private BoneAngleTracker swipeGestureTracker = new BoneAngleTracker(30, (float) 1, -90);
+        private HandsTracker tableFlipGestureTracker = new HandsTracker(30,(float)1.1,(float)0.4);
+        private BoneAngleTracker rightSwipeGestureTracker = new BoneAngleTracker(30, (float) 1, -90);
+        private BoneAngleTracker leftSwipeGestureTracker  = new BoneAngleTracker(30, (float)1, 90);
+
+
 
         /// <summary>
         /// Handles the body frame data arriving from the sensor
@@ -51,12 +54,6 @@ namespace FabulousBrowserApp
 
                 if (frame != null)
                 {
-
-//                    if (lastGesture + 1000 < frame.RelativeTime.TotalMilliseconds)
-//                    {
-//                        Debug.WriteLine("No gestures right now... {0}", frame.RelativeTime.TotalMilliseconds - lastGesture);
-//                        return;
-//                    }
 
                     // BodyFrame is IDisposable
                     using (frame)
@@ -79,21 +76,23 @@ namespace FabulousBrowserApp
                                 IReadOnlyDictionary<JointType, Joint> joints = body.Joints;
 
 
-                                if (swipeGestureTracker.Record_elbow_and_wrist_positions(joints[JointType.HandRight], joints[JointType.ElbowRight]))
+                                if (rightSwipeGestureTracker.Record_elbow_and_wrist_positions(joints[JointType.HandRight], joints[JointType.ElbowRight]))
                                 {
-                                    Debug.WriteLine("Arm swiped");
-                                    lastGesture = frame.RelativeTime.TotalMilliseconds;
-
-                                    Swipe();
+                                    Swipe('right');
                                 }
 
                                 if (tableFlipGestureTracker.Record_hand_positions(joints[JointType.HandLeft], joints[JointType.HandRight]))
                                 {
                                     Debug.WriteLine("flipped");
-                                    lastGesture = frame.RelativeTime.TotalMilliseconds;
-
                                     Flip();
                                 }
+
+                                if (leftSwipeGestureTracker.Record_elbow_and_wrist_positions(
+                                    joints[JointType.HandLeft], joints[JointType.ElbowLeft]))
+                                {
+                                    Swipe('left');
+                                }
+
                             }
 
                         }

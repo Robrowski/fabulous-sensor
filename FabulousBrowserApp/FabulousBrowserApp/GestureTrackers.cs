@@ -46,7 +46,7 @@ namespace FabulousBrowserApp
         {
             // Check to make sure the hands are close enough vertically (X and Z ignored)
             // If they are too far apart, give up and reset to history
-            if (Math.Abs(left.Position.Y - right.Position.Y) > .08)
+            if (Math.Abs(left.Position.Y - right.Position.Y) > .07)
             {
                 _verticalHandPositionHistory.Clear();
                 return false;
