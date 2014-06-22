@@ -336,11 +336,14 @@ namespace FabulousBrowserApp
         {
             var index = LbFileSource.SelectedIndex;
             var size = LbFileSource.Items.Count;
-
+            
             index--;
             var next = Math.Abs(index % size);
+            if (index == -1)
+                next = size - 1;
+            
             LbFileSource.SelectedIndex = next;
-            Debug.WriteLine("index is {0}", next);
+            Debug.WriteLine("index is {0}, next is{1}",index, next);
         }
 
         private void NextBtn_OnClick(object sender, RoutedEventArgs e)
