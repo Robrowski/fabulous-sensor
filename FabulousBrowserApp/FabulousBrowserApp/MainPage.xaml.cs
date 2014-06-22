@@ -410,7 +410,7 @@ namespace FabulousBrowserApp
             LbFileSource.SelectedIndex = rnd.Next(0,size);
             //            Debug.WriteLine("index is {0}", next);
         }
-    }
+    
 
         #endregion
 
