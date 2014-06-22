@@ -33,8 +33,8 @@ namespace FabulousBrowserApp
 
 
         private HandsTracker tableFlipGestureTracker = new HandsTracker(30,(float)1.4,(float) 0.2);
-        private BoneAngleTracker rightSwipeGestureTracker = new BoneAngleTracker(30, (float) 1, -100);
-        private BoneAngleTracker leftSwipeGestureTracker  = new BoneAngleTracker(30, (float)1, 100);
+        private BoneAngleTracker rightSwipeGestureTracker = new BoneAngleTracker(30, (float) .9, -100);
+        private BoneAngleTracker leftSwipeGestureTracker  = new BoneAngleTracker(30, (float).9, 100);
 
 
 
@@ -45,6 +45,8 @@ namespace FabulousBrowserApp
         /// <param name="e">event arguments</param>
         private void Reader_FrameArrived(object sender, BodyFrameArrivedEventArgs e)
         {
+
+            //if (!GestureDelay()) return;
 //            Debug.WriteLine("BODY HAS ARRIVED");
             BodyFrameReference frameReference = e.FrameReference;
 
