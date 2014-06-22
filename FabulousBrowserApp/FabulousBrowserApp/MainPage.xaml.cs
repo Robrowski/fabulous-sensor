@@ -305,7 +305,7 @@ namespace FabulousBrowserApp
             // we got a frame, render
             if (colorFrameProcessed)
             {
-                RenderColorPixels(this.colorPixels);
+                //RenderColorPixels(this.colorPixels);
             }
         }
 
