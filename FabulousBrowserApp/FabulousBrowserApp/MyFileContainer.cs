@@ -22,7 +22,7 @@ namespace FabulousBrowserApp
             ShortName = filePath.Name.Substring(0, length);
 
 
-            var filetype = filePath.FileType;
+            FileType = filePath.FileType;
             
 #if DEBUG
             Debug.WriteLine("New FileContainer:\n\tFile Source: {0}\n\tShort Name: {1}\n\tImageSource: {2}", FilePath, ShortName, ImageSource);
@@ -44,6 +44,8 @@ namespace FabulousBrowserApp
             ItemDate = properties.ItemDate.ToString();
         }
 
+
+        private string _filetype;
         private string _modified;
         private string _filesize;
         private string _itemDate;
@@ -54,6 +56,16 @@ namespace FabulousBrowserApp
         private StorageFile _originalFile;
 
 
+        public string FileType
+        {
+            get { return _filetype; }
+            set
+            {
+                if (value == _filetype) return;
+                _filetype = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string ItemDate
         {
