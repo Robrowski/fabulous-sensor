@@ -48,7 +48,6 @@ namespace FabulousBrowserApp
             // If they are too far apart, give up and reset to history
             if (Math.Abs(left.Position.Y - right.Position.Y) > .08)
             {
-                Debug.WriteLine("Hands too far apart");
                 _verticalHandPositionHistory.Clear();
                 return false;
             }
@@ -65,8 +64,6 @@ namespace FabulousBrowserApp
             // See if the desired displacement was achieved
             foreach (float f in _verticalHandPositionHistory)
             {
-
-//                Debug.WriteLine("Displacement: {0}", handPosition - f);
                 // If the displacement happened in recorded history, the gesture was achieved
                 /// TODO: use ratio of head to torso to centroid of body as reference for table flip displacement
                 if (handPosition - f > MinimumUpwardsDisplacement)
