@@ -21,6 +21,9 @@ namespace FabulousBrowserApp
 
             ShortName = filePath.Name.Substring(0, length);
 
+
+            var filetype = filePath.FileType;
+            
 #if DEBUG
             Debug.WriteLine("New FileContainer:\n\tFile Source: {0}\n\tShort Name: {1}\n\tImageSource: {2}", FilePath, ShortName, ImageSource);
 #endif
@@ -34,14 +37,56 @@ namespace FabulousBrowserApp
             bi.SetSource(stream);
             
             ImageSource = bi;
+
+            var properties = await _originalFile.GetBasicPropertiesAsync();
+            Modified = properties.DateModified.ToString();
+            FileSize = properties.Size.ToString();
+            ItemDate = properties.ItemDate.ToString();
         }
 
+        private string _modified;
+        private string _filesize;
+        private string _itemDate;
 
         private string _filePath;
         private string _shortName;
         private BitmapImage _imageSource;
         private StorageFile _originalFile;
 
+
+
+        public string ItemDate
+        {
+            get { return _itemDate; }
+            set
+            {
+                if (value == _itemDate) return;
+                _itemDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string FileSize
+        {
+            get { return _filesize; }
+            set
+            {
+                if (value == _filesize) return;
+                _filesize = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Modified
+        {
+            get { return _modified; }
+            set
+            {
+                if (value == _modified) return;
+                _modified = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string FilePath
         {
