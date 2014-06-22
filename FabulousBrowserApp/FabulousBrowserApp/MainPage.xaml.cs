@@ -36,7 +36,7 @@ namespace FabulousBrowserApp
 
         private int frameCounter = 0;
         private int frameSkip = 2;
-
+        private Random rnd = new Random();
         #region Variables
         readonly List<string> _fileTypes = new List<string> { "jpg", "jpeg", "tif", "tiff", "png", "gif" };
 
@@ -355,6 +355,13 @@ namespace FabulousBrowserApp
             var next = index % size;
             LbFileSource.SelectedIndex = next;
 //            Debug.WriteLine("index is {0}", next);
+        }
+
+        private void YOLOBTN_OnClick(object sender, RoutedEventArgs e)
+        {
+            var size = LbFileSource.Items.Count;
+            LbFileSource.SelectedIndex = rnd.Next(0,size);
+            //            Debug.WriteLine("index is {0}", next);
         }
     }
 
