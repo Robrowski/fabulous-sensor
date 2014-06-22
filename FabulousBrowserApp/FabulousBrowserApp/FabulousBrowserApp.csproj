@@ -114,13 +114,15 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JointInfo.cs" />
+    <Compile Include="GestureTrackers.cs" />
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Common\BooleanNegationConverter.cs" />
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\LayoutAwarePage.cs" />
     <Compile Include="Common\RichTextColumns.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="JointInfo.cs" />
+    <Compile Include="MainPage.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -138,10 +140,7 @@
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
-    <Content Include="Assets\Square310x310Logo.scale-100.jpg" />
-    <Content Include="Assets\Square70x70Logo.scale-100.jpg" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-100.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
