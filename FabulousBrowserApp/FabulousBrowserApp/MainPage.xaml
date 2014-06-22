@@ -90,11 +90,11 @@
                                             </Grid.RowDefinitions>
                                             <TextBlock x:Name="TbFileName" Grid.Row="0" Grid.Column="0" Text="{Binding ShortName}"
                                                        Style="{StaticResource CompactFileTextStyle}" />
-                                            <TextBlock x:Name="TbFileSize" Grid.Row="0" Grid.Column="1" Text="DummyFileSize" 
+                                            <TextBlock x:Name="TbFileSize" Grid.Row="0" Grid.Column="1" Text="{Binding FileSize}" 
                                                        Style="{StaticResource CompactFileTextStyle}" />
-                                            <TextBlock x:Name="TbFileType" Grid.Row="1" Grid.Column="0" Text="DummyFileType" 
+                                            <TextBlock x:Name="TbFileType" Grid.Row="1" Grid.Column="0" Text="{Binding FileType}" 
                                                        Style="{StaticResource CompactFileTextStyle}" />
-                                            <TextBlock x:Name="TbFilePlaceholderData" Grid.Row="1" Grid.Column="1" Text="DummyPlaceholder" 
+                                            <TextBlock x:Name="TbFilePlaceholderData" Grid.Row="1" Grid.Column="1" Text="{Binding ItemDate}" 
                                                        Style="{StaticResource CompactFileTextStyle}" />
                                             <TextBlock x:Name="TbFileURI" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                                                        Text="{Binding FilePath}" Style="{StaticResource CompactFileTextStyle}" />
