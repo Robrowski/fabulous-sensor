@@ -56,11 +56,11 @@ namespace FabulousBrowserApp
 
         private int frameCounter = 0;
         private int frameSkip = 2;
-
+        private Random rnd = new Random();
         #region Variables
         readonly List<string> _fileTypes = new List<string> { "jpg", "jpeg", "tif", "tiff", "png", "gif" };
 
-
+        
 
         /// <summary>
         /// Coordinate mapper to map one type of point to another
@@ -198,7 +198,7 @@ namespace FabulousBrowserApp
 
 
 
-    
+
 
 
 
@@ -267,8 +267,8 @@ namespace FabulousBrowserApp
 
 
                 FrameDescription colorFrameDescription = this.kinectSensor.ColorFrameSource.FrameDescription;
-                // create the bitmap to display
-                this.bitmap = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height);
+            // create the bitmap to display
+            this.bitmap = new WriteableBitmap(colorFrameDescription.Width, colorFrameDescription.Height);
 
                 int colorWidth = colorFrameDescription.Width;
                 int colorHeight = colorFrameDescription.Height;
@@ -280,10 +280,10 @@ namespace FabulousBrowserApp
                     this.kinectSensor.OpenMultiSourceFrameReader(FrameSourceTypes.Depth | FrameSourceTypes.Color |
                                                                  FrameSourceTypes.BodyIndex);
 
-                // set the status text
-                this.StatusText = this.kinectSensor.IsAvailable ? "RunningStatusText"
-                                                                : "NoSensorStatusText";
-            }
+            // set the status text
+            this.StatusText = this.kinectSensor.IsAvailable ? "RunningStatusText"
+                                                            : "NoSensorStatusText";
+        }
         }
 
 
@@ -349,7 +349,7 @@ namespace FabulousBrowserApp
             colorPixelStream.Write(pixels, 0, pixels.Length);
             bitmap.Invalidate();
             //OnPropertyChanged("ImageSource");
-            ImgKinectTarget.Source = bitmap;
+//            ImgKinectTarget.Source = bitmap; // Removed from XAML
         }
 
         /// <summary>
@@ -385,9 +385,12 @@ namespace FabulousBrowserApp
             var size = LbFileSource.Items.Count;
 
             index--;
-            var next = Math.Abs(index%size);
+            var next = Math.Abs(index % size);
+            if (index == -1)
+                next = size - 1;
+            
             LbFileSource.SelectedIndex = next;
-            Debug.WriteLine("index is {0}", next);
+            Debug.WriteLine("index is {0}, next is{1}",index, next);
         }
 
         private void NextBtn_OnClick(object sender, RoutedEventArgs e)
@@ -401,12 +404,20 @@ namespace FabulousBrowserApp
 //            Debug.WriteLine("index is {0}", next);
         }
 
+        private void YOLOBTN_OnClick(object sender, RoutedEventArgs e)
+        {
+            var size = LbFileSource.Items.Count;
+            LbFileSource.SelectedIndex = rnd.Next(0,size);
+            //            Debug.WriteLine("index is {0}", next);
+        }
+    }
+
         #endregion
 
         private void MainPage_OnLoaded(object sender, RoutedEventArgs e)
-        {
+    {
             if (this.reader != null)
-            {
+        {
                 this.reader.MultiSourceFrameArrived += this.Reader_MultiSourceFrameArrived;
             }
         }
@@ -464,15 +475,15 @@ namespace FabulousBrowserApp
                 multiSourceFrame = frameReference.AcquireFrame();
 
                 if (multiSourceFrame != null)
-                {
+        {
                     DepthFrameReference depthFrameReference = multiSourceFrame.DepthFrameReference;
                     ColorFrameReference colorFrameReference = multiSourceFrame.ColorFrameReference;
                     BodyIndexFrameReference bodyIndexFrameReference = multiSourceFrame.BodyIndexFrameReference;
-
+            
                     if (this.startTime.Ticks == 0)
                     {
                         this.startTime = depthFrameReference.RelativeTime;
-                    }
+        }
 
                     depthFrame = depthFrameReference.AcquireFrame();
                     colorFrame = colorFrameReference.AcquireFrame();
@@ -488,26 +499,26 @@ namespace FabulousBrowserApp
 
                         // update status unless last message is sticky for a while
                         if (DateTime.Now >= this.nextStatusUpdate)
-                        {
+        {
                             // calcuate fps based on last frame received
                             double fps = 0.0;
 
                             if (this.stopwatch.IsRunning)
-                            {
+            {
                                 this.stopwatch.Stop();
                                 fps = this.framesSinceUpdate / this.stopwatch.Elapsed.TotalSeconds;
                                 this.stopwatch.Reset();
-                            }
+            }
 
                             this.nextStatusUpdate = DateTime.Now + TimeSpan.FromSeconds(1);
                             this.StatusText = string.Format("FPS: {0} -- Time: {1}", fps, depthFrameReference.RelativeTime - this.startTime);
-                        }
+        }
 
                         if (!this.stopwatch.IsRunning)
-                        {
+            {
                             this.framesSinceUpdate = 0;
                             this.stopwatch.Start();
-                        }
+        }
 
                         int depthWidth = depthFrameDescription.Width;
                         int depthHeight = depthFrameDescription.Height;
@@ -522,16 +533,16 @@ namespace FabulousBrowserApp
                         if (((depthWidth * depthHeight) == this.depthFrameData.Length) &&
                             ((colorWidth * colorHeight * this.bytesPerPixel) == this.colorFrameData.Length) &&
                             ((bodyIndexWidth * bodyIndexHeight) == this.bodyIndexFrameData.Length))
-                        {
+        {
                             depthFrame.CopyFrameDataToArray(this.depthFrameData);
                             if (colorFrame.RawColorImageFormat == ColorImageFormat.Bgra)
-                            {
+            {
                                 colorFrame.CopyRawFrameDataToArray(this.colorFrameData);
-                            }
+            }
                             else
                             {
                                 colorFrame.CopyConvertedFrameDataToArray(this.colorFrameData, ColorImageFormat.Bgra);
-                            }
+        }
 
                             bodyIndexFrame.CopyFrameDataToArray(this.bodyIndexFrameData);
 
@@ -543,7 +554,7 @@ namespace FabulousBrowserApp
                             for (int y = 0; y < depthHeight; ++y)
                             {
                                 for (int x = 0; x < depthWidth; ++x)
-                                {
+        {
                                     // calculate index into depth array
                                     int depthIndex = (y * depthWidth) + x;
 
@@ -592,10 +603,10 @@ namespace FabulousBrowserApp
             {
                 // DepthFrame, ColorFrame, BodyIndexFrame are IDispoable
                 if (depthFrame != null)
-                {
+        {
                     depthFrame.Dispose();
                     depthFrame = null;
-                }
+        }
 
                 if (colorFrame != null)
                 {

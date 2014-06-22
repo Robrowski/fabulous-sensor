@@ -3,13 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FabulousBrowserApp">
-    
-    <Application.Resources>
-        <SolidColorBrush x:Key="ListBoxBackgroundThemeBrush" Color="#FF000000" />
-        <SolidColorBrush x:Key="ListBoxBorderThemeBrush" Color="#FF000000" />
-        <SolidColorBrush x:Key="ListBoxDisabledForegroundThemeBrush" Color="#FF000000" />
-        <SolidColorBrush x:Key="ListBoxFocusBackgroundThemeBrush" Color="#FF000000" />
-        <SolidColorBrush x:Key="ListBoxForegroundThemeBrush" Color="#FF000000" />
-    </Application.Resources>
 
+    <Application.Resources>
+     
+        <SolidColorBrush x:Key="ListBoxBackgroundThemeBrush" Color="Transparent" />        <SolidColorBrush x:Key="ListBoxBorderThemeBrush" Color="Transparent" />        <SolidColorBrush x:Key="ListBoxDisabledForegroundThemeBrush" Color="Transparent" />        <SolidColorBrush x:Key="ListBoxFocusBackgroundThemeBrush" Color="Transparent" />        <SolidColorBrush x:Key="ListBoxForegroundThemeBrush" Color="Transparent" />
+
+    </Application.Resources>
 </Application>

@@ -11,7 +11,7 @@
     Unloaded="MainPage_Unloaded">
 
 
-    <Grid>
+    <Grid Background="MediumVioletRed">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="500"/>
             <ColumnDefinition Width="*"/>
@@ -113,6 +113,7 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
+
             </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
@@ -123,10 +124,12 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Content="Back" Grid.Column="0" />
                 <Button Content="Home" Grid.Column="1"/>
-                <Button Content="Forward" Grid.Column="2"/>
+                <Button Content="YOLO" Grid.Column="2" Click="YOLOBTN_OnClick"/>  
+                <Button Content="Forward" Grid.Column="3"/>
             </Grid>
 
             <ListBox x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}"
@@ -140,13 +143,6 @@
             </Grid>
             <Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
             <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>
-            <Grid x:Name="GrdKinectPreview" 
-                  VerticalAlignment="Bottom" 
-                  HorizontalAlignment="Right" 
-                  Height="350" Width="400" Background="Green" IsHitTestVisible="False">
-                <Image Name="ImgKinectTarget" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <!-- Source="{Binding ImageSource, ElementName=FabWindow}" -->
-            </Grid>
             <TextBlock Height="30" VerticalAlignment="Bottom" Text="{Binding FilePath}"/>
         </Grid>
     </Grid>
