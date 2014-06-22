@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -620,6 +621,46 @@ namespace FabulousBrowserApp
                     bodyIndexFrame = null;
                 }
             }
+        }
+
+        private void LbFileSource_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int lbIndex = LbFileSource.SelectedIndex;
+            if (lbIndex == -1) return;
+
+            int fvIndex = FvView.SelectedIndex;
+            int delta = lbIndex - fvIndex;
+
+            if (Math.Abs(delta) == 1)
+            {
+                FvView.SelectedIndex = lbIndex;
+            }
+            else
+            {
+                while (delta != 0)
+                {
+                    if (delta < 0)
+                    {
+                        //Left
+                        FvView.SelectedIndex--;
+                        delta++;
+                    }
+                    else
+                    {
+                        //Right
+                        FvView.SelectedIndex++;
+                        delta--;
+                    }
+
+                    Task.Delay(TimeSpan.FromMilliseconds(300));
+                }
+            }
+
+        }
+
+        private void FvView_OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            LbFileSource.SelectedIndex = -1;
         }
     }
 }

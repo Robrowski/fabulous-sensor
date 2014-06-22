@@ -133,16 +133,24 @@
             </Grid>
 
             <ListBox x:Name="LbFileSource" Grid.Row="1" ItemsSource="{Binding FileSource, ElementName=FabWindow}" 
-                          Style="{StaticResource CompactFileViewerItemsControlStyle}" Background="{x:Null}" BorderBrush="{x:Null}"/>
+                          Style="{StaticResource CompactFileViewerItemsControlStyle}" Background="{x:Null}" BorderBrush="{x:Null}"
+                     SelectionChanged="LbFileSource_OnSelectionChanged"/>
         </Grid>
 
         <Grid x:Name="GrdExtendedView" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=LbFileSource}">
             <Grid x:Name="GridFullImageRenderer">
-                <Image x:Name="ImgA" Source="{Binding ImageSource}"/>
+                <Image x:Name="ImgA" Source="{Binding ImageSource}" Visibility="Collapsed"/>
+                <FlipView Name="FvView" ItemsSource="{Binding FileSource, ElementName=FabWindow}" PointerPressed="FvView_OnPointerPressed">
+                    <FlipView.ItemTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding ImageSource}" />
+                        </DataTemplate>
+                    </FlipView.ItemTemplate>
+                </FlipView>
                 <Image x:Name="ImgB"/>
             </Grid>
-            <Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
-            <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>
+            <!--<Button Name ="prevBtn" HorizontalAlignment="Left" Content="Previous Image" Click="PrevBtn_OnClick"/>
+            <Button Name ="nextBtn" HorizontalAlignment="Right" Content="Next Image" Click="NextBtn_OnClick"/>-->
             <TextBlock Height="30" VerticalAlignment="Bottom" Text="{Binding FilePath}"/>
         </Grid>
     </Grid>
