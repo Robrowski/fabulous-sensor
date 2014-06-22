@@ -131,7 +131,7 @@ namespace FabulousBrowserApp
                 {
                     displacement -= 179;
                 }
-                else if (displacement <= 180)
+                else if (displacement <= -180)
                 {
                     displacement += 179;
                 }
@@ -139,10 +139,6 @@ namespace FabulousBrowserApp
                 // If magnitude of displacement > desired AND the displacements are in the same direction, we have a gesture
                 if (Math.Abs(displacement) >= Math.Abs(_minimumAngularDisplacement) && displacement*_minimumAngularDisplacement > 0)
                 {
-                    Debug.WriteLine("displacement: {0}:", displacement);
-                    Debug.WriteLine("current: {0}:", currentPosition);
-                    
-
                     _angleHistory.Clear();
                     return true;
                 }

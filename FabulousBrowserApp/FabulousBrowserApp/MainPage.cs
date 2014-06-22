@@ -78,19 +78,19 @@ namespace FabulousBrowserApp
 
                                 if (rightSwipeGestureTracker.Record_elbow_and_wrist_positions(joints[JointType.HandRight], joints[JointType.ElbowRight]))
                                 {
-                                    Swipe('right');
+                                    Swipe("right");
                                 }
 
                                 if (tableFlipGestureTracker.Record_hand_positions(joints[JointType.HandLeft], joints[JointType.HandRight]))
                                 {
-                                    Debug.WriteLine("flipped");
+                                    //Debug.WriteLine("flipped");
                                     Flip();
                                 }
 
                                 if (leftSwipeGestureTracker.Record_elbow_and_wrist_positions(
                                     joints[JointType.HandLeft], joints[JointType.ElbowLeft]))
                                 {
-                                    Swipe('left');
+                                    Swipe("left");
                                 }
 
                             }

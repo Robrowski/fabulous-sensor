@@ -418,7 +418,16 @@ namespace FabulousBrowserApp
             LbFileSource.SelectedIndex = -1;
         }
 
-
+        private DateTime lastAcceptedGesture = DateTime.MinValue;
+        private bool GestureDelay()
+        {
+            if (DateTime.Now.Subtract(lastAcceptedGesture).TotalMilliseconds > TimeSpan.FromMilliseconds(2000).TotalMilliseconds)
+            {
+                lastAcceptedGesture = DateTime.Now;
+                return true;
+            }
+            return false;
+        }
 
         private void Flip()
         {
@@ -427,7 +436,9 @@ namespace FabulousBrowserApp
 
         private void Swipe(String direction)
         {
-            Debug.WriteLine("Swipe");
+            if (!GestureDelay()) return;
+
+            Debug.WriteLine("Swipe " + direction);
             if (direction == "left")
             {
                 var index = FvView.SelectedIndex;
