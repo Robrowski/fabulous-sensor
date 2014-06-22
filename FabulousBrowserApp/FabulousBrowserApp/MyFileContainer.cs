@@ -39,9 +39,9 @@ namespace FabulousBrowserApp
             ImageSource = bi;
 
             var properties = await _originalFile.GetBasicPropertiesAsync();
-            Modified = properties.DateModified.ToString();
-            FileSize = properties.Size.ToString();
-            ItemDate = properties.ItemDate.ToString();
+            Modified = String.Format("{0:MM/dd/yy H:mm:ss", properties.DateModified);
+            FileSize = String.Format("{0}Kb", properties.Size / 1024);
+            ItemDate = String.Format("{0:MM/dd/yy H:mm:ss", properties.ItemDate);
         }
 
 
