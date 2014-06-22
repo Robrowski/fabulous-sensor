@@ -21,6 +21,9 @@ namespace FabulousBrowserApp
 
             ShortName = filePath.Name.Substring(0, length);
 
+
+            FileType = filePath.FileType;
+            
 #if DEBUG
             Debug.WriteLine("New FileContainer:\n\tFile Source: {0}\n\tShort Name: {1}\n\tImageSource: {2}", FilePath, ShortName, ImageSource);
 #endif
@@ -34,14 +37,70 @@ namespace FabulousBrowserApp
             bi.SetSource(stream);
             
             ImageSource = bi;
+
+            string format = "MMM ddd d HH:mm yyyy";    // Use this format
+
+            var properties = await _originalFile.GetBasicPropertiesAsync();
+            Modified = properties.DateModified.ToString(format);
+            FileSize = String.Format("{0}Kb", (long)properties.Size / 1024);
+            ItemDate = properties.ItemDate.ToString(format);
         }
 
+
+        private string _filetype;
+        private string _modified;
+        private string _filesize;
+        private string _itemDate;
 
         private string _filePath;
         private string _shortName;
         private BitmapImage _imageSource;
         private StorageFile _originalFile;
 
+
+        public string FileType
+        {
+            get { return _filetype; }
+            set
+            {
+                if (value == _filetype) return;
+                _filetype = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ItemDate
+        {
+            get { return _itemDate; }
+            set
+            {
+                if (value == _itemDate) return;
+                _itemDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string FileSize
+        {
+            get { return _filesize; }
+            set
+            {
+                if (value == _filesize) return;
+                _filesize = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Modified
+        {
+            get { return _modified; }
+            set
+            {
+                if (value == _modified) return;
+                _modified = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string FilePath
         {
